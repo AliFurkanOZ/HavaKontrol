@@ -1,0 +1,293 @@
+<svg viewBox="0 0 1780 950" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTpiMjdhNDFjMC1lMDg1LTQzYzYtYjZlMy01ZTljYzdkMWUxZTMAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaAdXWfuU7HHeeCgwRxIQ/3YAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo1ZTQzZGExNC0wYzUxLTQ5YmQtYjM2YS03NDdiYWQwMjNlNzJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNo0hpg4ouLCPmYfmMUW41gGwAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggHb0Al15a3zZUMHdFILn3XZRmyqZIsRgL2Bj/KSh2gD+kZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaCVGCZgqTPijApyB83+Fu4kAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCCLlMn/j0HUfb4GfLKzRL3aZ4Su+Let+G7yxav07mT192RuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBioZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmIyN2E0MWMwLWUwODUtNDNjNi1iNmUzLTVlOWNjN2QxZTFlMy9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjI2ZGM3ZjIzLTBlMWMtNDI2Zi1iMjI2LWVhZjEzZjQwNTk1M3JjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCAdvQCXXlrfNlQwd0UgufddlGbKpkixGAvYGP8pKHaAP6JjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg/enIJoVZ+LccGBTg+wne4rFjLn+/r0AwBphfjp2dsj6iY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggYAupKjaxHODJ6XP9CXzSDWJEiMhXTjb5wUlw4wzbEMJ0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQK5Wo7cZYiz+2JDpdKkO3+nCCYews9g7UA/1qTLF7fRsFVuF+wEN8Hk8LkWD8EcqReNDgnDi2XuboY8g8gZvGXw=</c2pa:manifest></metadata>
+  <defs>
+    <symbol id="valve" viewBox="0 0 20 16">
+      <polygon points="0,1 9,8 0,15" fill="none" stroke="#2f6fb0" stroke-width="1.6"/>
+      <polygon points="20,1 11,8 20,15" fill="none" stroke="#2f6fb0" stroke-width="1.6"/>
+    </symbol>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f6fb0"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a8a8a"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8e44ec"/>
+    </marker>
+    <symbol id="valveOrange" viewBox="0 0 20 16">
+      <polygon points="0,1 9,8 0,15" fill="none" stroke="#d17a1f" stroke-width="1.8"/>
+      <polygon points="20,1 11,8 20,15" fill="none" stroke="#d17a1f" stroke-width="1.8"/>
+    </symbol>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d17a1f"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1780" height="950" fill="#f7fafc"/>
+
+  <!-- ===================== TITLE ===================== -->
+  <text x="20" y="16" font-size="13" fill="#555">Not: VALF 8 artık sensör çıkışında değil, karışım manifoldunun tahliye (egzoz) hattında — VALF 13/14/15 ile aynı mantıkta.</text>
+
+  <!-- ===================== GAZ 1 HATTI ===================== -->
+  <g>
+    <rect x="20" y="30" width="190" height="60" rx="10" fill="#eaf3fc" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="115" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#1c4a78">GAZ GİRİŞ 1</text>
+    <text x="115" y="74" text-anchor="middle" font-size="12" fill="#1c4a78">(GAZ 1)</text>
+    <line x1="210" y1="60" x2="270" y2="60" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="272" y="38" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <use href="#valve" x="312" y="44" width="20" height="16"/>
+    <text x="322" y="72" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 1</text>
+    <rect x="298" y="76" width="48" height="14" rx="7" fill="#dfe3e6"/>
+    <text x="322" y="86" text-anchor="middle" font-size="8" fill="#555">KAPALI</text>
+    <line x1="372" y1="60" x2="420" y2="60" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="422" y="30" width="190" height="60" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="440" y="50" font-size="12" font-weight="bold" fill="#1c4a78">MFC-1</text>
+    <text x="440" y="66" font-size="11" fill="#1c4a78">0.0 sccm · Ayar 0.0</text>
+    <rect x="540" y="34" width="62" height="16" rx="8" fill="#dfe3e6"/>
+    <text x="571" y="46" text-anchor="middle" font-size="8" fill="#555">KAPALI</text>
+    <line x1="612" y1="60" x2="806" y2="60" stroke="#2f6fb0" stroke-width="2"/>
+  </g>
+
+  <!-- ===================== GAZ 2 HATTI ===================== -->
+  <g>
+    <rect x="20" y="146" width="190" height="60" rx="10" fill="#eaf3fc" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="115" y="171" text-anchor="middle" font-size="14" font-weight="bold" fill="#1c4a78">GAZ GİRİŞ 2</text>
+    <text x="115" y="190" text-anchor="middle" font-size="12" fill="#1c4a78">(GAZ 2)</text>
+    <line x1="210" y1="176" x2="270" y2="176" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="272" y="140" width="120" height="72" rx="8" fill="#eaf7f2" stroke="#279a7a" stroke-width="1.5"/>
+    <text x="332" y="158" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a6b52">V-OVG2</text>
+    <text x="332" y="174" text-anchor="middle" font-size="10" fill="#1a6b52">T: 25.0 °C</text>
+    <text x="332" y="188" text-anchor="middle" font-size="10" fill="#1a6b52">Q: 0.0 slm</text>
+    <text x="332" y="202" text-anchor="middle" font-size="9" fill="#1a6b52">Durum: KAPALI</text>
+
+    <line x1="392" y1="150" x2="420" y2="120" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="98" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <use href="#valve" x="462" y="104" width="20" height="16"/>
+    <text x="472" y="132" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 2</text>
+    <line x1="522" y1="120" x2="570" y2="120" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="572" y="90" width="190" height="60" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="590" y="110" font-size="12" font-weight="bold" fill="#1c4a78">MFC-2</text>
+    <text x="590" y="126" font-size="11" fill="#1c4a78">0.0 sccm · Ayar 0.0</text>
+    <line x1="762" y1="120" x2="806" y2="120" stroke="#2f6fb0" stroke-width="2"/>
+
+    <line x1="392" y1="190" x2="420" y2="216" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="196" width="100" height="40" rx="8" fill="#fff1e0" stroke="#d17a1f" stroke-width="1.8"/>
+    <use href="#valveOrange" x="462" y="200" width="20" height="16"/>
+    <text x="472" y="226" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">VALF 13</text>
+    <line x1="522" y1="216" x2="570" y2="216" stroke="#d17a1f" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <rect x="572" y="200" width="140" height="32" rx="6" fill="#fdece0" stroke="#d17a1f" stroke-width="1.6"/>
+    <text x="642" y="220" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">ÇIKIŞ / EGZOZ</text>
+  </g>
+
+  <!-- ===================== GAZ 3 HATTI ===================== -->
+  <g>
+    <rect x="20" y="266" width="190" height="60" rx="10" fill="#eaf3fc" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="115" y="291" text-anchor="middle" font-size="14" font-weight="bold" fill="#1c4a78">GAZ GİRİŞ 3</text>
+    <text x="115" y="310" text-anchor="middle" font-size="12" fill="#1c4a78">(GAZ 3)</text>
+    <line x1="210" y1="296" x2="270" y2="296" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="272" y="260" width="120" height="72" rx="8" fill="#eaf7f2" stroke="#279a7a" stroke-width="1.5"/>
+    <text x="332" y="278" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a6b52">V-OVG3</text>
+    <text x="332" y="294" text-anchor="middle" font-size="10" fill="#1a6b52">T: 25.0 °C</text>
+    <text x="332" y="308" text-anchor="middle" font-size="10" fill="#1a6b52">Q: 0.0 slm</text>
+    <text x="332" y="322" text-anchor="middle" font-size="9" fill="#1a6b52">Durum: KAPALI</text>
+
+    <line x1="392" y1="270" x2="420" y2="240" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="218" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <use href="#valve" x="462" y="224" width="20" height="16"/>
+    <text x="472" y="252" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 3</text>
+    <line x1="522" y1="240" x2="570" y2="240" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="572" y="210" width="190" height="60" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="590" y="230" font-size="12" font-weight="bold" fill="#1c4a78">MFC-3</text>
+    <text x="590" y="246" font-size="11" fill="#1c4a78">0.0 sccm · Ayar 0.0</text>
+    <line x1="762" y1="240" x2="806" y2="240" stroke="#2f6fb0" stroke-width="2"/>
+
+    <line x1="392" y1="310" x2="420" y2="336" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="316" width="100" height="40" rx="8" fill="#fff1e0" stroke="#d17a1f" stroke-width="1.8"/>
+    <use href="#valveOrange" x="462" y="320" width="20" height="16"/>
+    <text x="472" y="346" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">VALF 14</text>
+    <line x1="522" y1="336" x2="570" y2="336" stroke="#d17a1f" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <rect x="572" y="320" width="140" height="32" rx="6" fill="#fdece0" stroke="#d17a1f" stroke-width="1.6"/>
+    <text x="642" y="340" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">ÇIKIŞ / EGZOZ</text>
+  </g>
+
+  <!-- ===================== GAZ 4 HATTI ===================== -->
+  <g>
+    <rect x="20" y="386" width="190" height="60" rx="10" fill="#eaf3fc" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="115" y="411" text-anchor="middle" font-size="14" font-weight="bold" fill="#1c4a78">GAZ GİRİŞ 4</text>
+    <text x="115" y="430" text-anchor="middle" font-size="12" fill="#1c4a78">(GAZ 4)</text>
+    <line x1="210" y1="416" x2="270" y2="416" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="272" y="380" width="120" height="72" rx="8" fill="#eaf7f2" stroke="#279a7a" stroke-width="1.5"/>
+    <text x="332" y="398" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a6b52">V-OVG4</text>
+    <text x="332" y="414" text-anchor="middle" font-size="10" fill="#1a6b52">T: 25.0 °C</text>
+    <text x="332" y="428" text-anchor="middle" font-size="10" fill="#1a6b52">Q: 0.0 slm</text>
+    <text x="332" y="442" text-anchor="middle" font-size="9" fill="#1a6b52">Durum: KAPALI</text>
+
+    <line x1="392" y1="390" x2="420" y2="360" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="338" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <use href="#valve" x="462" y="344" width="20" height="16"/>
+    <text x="472" y="372" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 4</text>
+    <line x1="522" y1="360" x2="570" y2="360" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="572" y="330" width="190" height="60" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="590" y="350" font-size="12" font-weight="bold" fill="#1c4a78">MFC-4</text>
+    <text x="590" y="366" font-size="11" fill="#1c4a78">0.0 sccm · Ayar 0.0</text>
+    <line x1="762" y1="360" x2="806" y2="360" stroke="#2f6fb0" stroke-width="2"/>
+
+    <line x1="392" y1="430" x2="420" y2="456" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="436" width="100" height="40" rx="8" fill="#fff1e0" stroke="#d17a1f" stroke-width="1.8"/>
+    <use href="#valveOrange" x="462" y="440" width="20" height="16"/>
+    <text x="472" y="466" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">VALF 15</text>
+    <line x1="522" y1="456" x2="570" y2="456" stroke="#d17a1f" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <rect x="572" y="440" width="140" height="32" rx="6" fill="#fdece0" stroke="#d17a1f" stroke-width="1.6"/>
+    <text x="642" y="460" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">ÇIKIŞ / EGZOZ</text>
+  </g>
+
+  <!-- ===================== KURU HAVA JENERATÖRÜ HATTI ===================== -->
+  <g>
+    <rect x="20" y="506" width="190" height="60" rx="10" fill="#eaf3fc" stroke="#2f6fb0" stroke-width="1.5"/>
+    <text x="115" y="533" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c4a78">KURU HAVA</text>
+    <text x="115" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c4a78">JENERATÖRÜ</text>
+    <line x1="210" y1="536" x2="270" y2="536" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="272" y="500" width="120" height="72" rx="8" fill="#eaf7f2" stroke="#279a7a" stroke-width="1.5"/>
+    <text x="332" y="518" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a6b52">V-OVG1</text>
+    <text x="332" y="534" text-anchor="middle" font-size="10" fill="#1a6b52">T: 25.0 °C</text>
+    <text x="332" y="548" text-anchor="middle" font-size="10" fill="#1a6b52">Q: 0.0 slm</text>
+    <text x="332" y="562" text-anchor="middle" font-size="9" fill="#1a6b52">Durum: KAPALI</text>
+
+    <line x1="392" y1="510" x2="420" y2="480" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="458" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+    <use href="#valve" x="462" y="464" width="20" height="16"/>
+    <text x="472" y="492" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 5</text>
+    <line x1="522" y1="480" x2="806" y2="480" stroke="#2f6fb0" stroke-width="2"/>
+
+    <line x1="392" y1="550" x2="420" y2="576" stroke="#279a7a" stroke-width="1.6"/>
+    <rect x="422" y="556" width="100" height="40" rx="8" fill="#fff1e0" stroke="#d17a1f" stroke-width="1.8"/>
+    <use href="#valveOrange" x="462" y="560" width="20" height="16"/>
+    <text x="472" y="586" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">VALF 16</text>
+    <line x1="522" y1="576" x2="570" y2="576" stroke="#d17a1f" stroke-width="2" marker-end="url(#arrowOrange)"/>
+    <rect x="572" y="560" width="140" height="32" rx="6" fill="#fdece0" stroke="#d17a1f" stroke-width="1.6"/>
+    <text x="642" y="580" text-anchor="middle" font-size="10" font-weight="bold" fill="#8a4b0a">ÇIKIŞ / EGZOZ</text>
+
+    <!-- VALF 7 bypass -->
+    <line x1="115" y1="566" x2="115" y2="650" stroke="#9a9a9a" stroke-width="1.6" stroke-dasharray="5 3"/>
+    <rect x="240" y="632" width="100" height="40" rx="8" fill="#f3f4f5" stroke="#8a8a8a" stroke-width="1.4"/>
+    <use href="#valve" x="280" y="636" width="20" height="16"/>
+    <text x="290" y="662" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">VALF 7</text>
+    <line x1="115" y1="650" x2="240" y2="650" stroke="#9a9a9a" stroke-width="1.6" stroke-dasharray="5 3"/>
+    <path d="M 340 652 L 1160 652 L 1160 340" fill="none" stroke="#9a9a9a" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#arrowGray)"/>
+    <text x="700" y="670" text-anchor="middle" font-size="10" fill="#777">Sensör Temizleme / Bypass Hattı</text>
+  </g>
+
+  <!-- ===================== KARIŞIM MANİFOLDU ===================== -->
+  <line x1="806" y1="60" x2="806" y2="480" stroke="#2f6fb0" stroke-width="2"/>
+  <line x1="806" y1="315" x2="850" y2="315" stroke="#2f6fb0" stroke-width="2"/>
+  <rect x="852" y="278" width="150" height="74" rx="10" fill="#dcedfb" stroke="#1c5fa8" stroke-width="2"/>
+  <text x="927" y="308" text-anchor="middle" font-size="12" font-weight="bold" fill="#123b64">KARIŞIM</text>
+  <text x="927" y="324" text-anchor="middle" font-size="12" font-weight="bold" fill="#123b64">MANİFOLDU</text>
+  <path d="M885,296 l14,0 l-6,-6 m6,6 l-6,6" fill="none" stroke="#123b64" stroke-width="1.3"/>
+  <path d="M900,314 l14,0 l-6,-6 m6,6 l-6,6" fill="none" stroke="#123b64" stroke-width="1.3"/>
+  <path d="M885,332 l14,0 l-6,-6 m6,6 l-6,6" fill="none" stroke="#123b64" stroke-width="1.3"/>
+
+  <!-- manifold output -> junction -->
+  <line x1="1002" y1="315" x2="1050" y2="315" stroke="#2f6fb0" stroke-width="2"/>
+  <circle cx="1050" cy="315" r="4" fill="#2f6fb0"/>
+
+  <!-- VALF 8 branch (manifold vent, moved from post-sensor position) -->
+  <line x1="1050" y1="315" x2="1050" y2="400" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1000" y="402" width="100" height="44" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+  <use href="#valve" x="1040" y="408" width="20" height="16"/>
+  <text x="1050" y="436" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 8</text>
+  <line x1="1100" y1="424" x2="1150" y2="424" stroke="#d17a1f" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <rect x="1152" y="406" width="150" height="36" rx="6" fill="#fdece0" stroke="#d17a1f" stroke-width="1.6"/>
+  <text x="1227" y="428" text-anchor="middle" font-size="11" font-weight="bold" fill="#8a4b0a">ÇIKIŞ / EGZOZ</text>
+  <text x="1052" y="464" font-size="9" fill="#1c5fa8" font-style="italic">(manifold tahliye vanası)</text>
+
+  <!-- VALF 6 -> sensor -->
+  <line x1="1050" y1="315" x2="1090" y2="315" stroke="#2f6fb0" stroke-width="2"/>
+  <rect x="1092" y="292" width="100" height="46" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+  <use href="#valve" x="1132" y="298" width="20" height="16"/>
+  <text x="1142" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="#1c4a78">VALF 6</text>
+  <line x1="1192" y1="315" x2="1226" y2="315" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== SENSÖR / ÖLÇÜM HÜCRESİ ===================== -->
+  <rect x="1228" y="230" width="300" height="170" rx="12" fill="#eaf3fc" stroke="#1c5fa8" stroke-width="2"/>
+  <text x="1378" y="270" text-anchor="middle" font-size="14" font-weight="bold" fill="#123b64">SENSÖR / ÖLÇÜM</text>
+  <text x="1378" y="288" text-anchor="middle" font-size="14" font-weight="bold" fill="#123b64">HÜCRESİ</text>
+  <rect x="1268" y="304" width="220" height="66" rx="8" fill="#ffffff" stroke="#1c5fa8" stroke-width="1.2"/>
+  <text x="1378" y="342" text-anchor="middle" font-size="12" fill="#123b64">Gaz Sensörü Test Odası</text>
+
+  <!-- sensor direct to çıkış, NO valve here anymore -->
+  <line x1="1528" y1="315" x2="1600" y2="315" stroke="#2f6fb0" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1602" y="292" width="120" height="46" rx="8" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.5"/>
+  <text x="1662" y="320" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c4a78">ÇIKIŞ</text>
+
+  <!-- ===================== KEYSIGHT ELEKTROMETRE ===================== -->
+  <rect x="1228" y="30" width="300" height="90" rx="10" fill="#f3ecfc" stroke="#7b3fe4" stroke-width="1.8"/>
+  <text x="1378" y="58" text-anchor="middle" font-size="13" font-weight="bold" fill="#5c2aa8">KEYSIGHT ELEKTROMETRE</text>
+  <text x="1378" y="78" text-anchor="middle" font-size="11" fill="#5c2aa8">Mod: AKIM (I)</text>
+  <line x1="1378" y1="120" x2="1378" y2="230" stroke="#8e44ec" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#arrowPurple)"/>
+
+  <!-- ===================== RIGOL DP831A ===================== -->
+  <rect x="1470" y="430" width="300" height="150" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.8"/>
+  <text x="1620" y="454" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c4a78">RIGOL DP831A GÜÇ KAYNAĞI</text>
+  <text x="1540" y="478" text-anchor="middle" font-size="10" fill="#1c4a78">CH1: 30.0V/5A</text>
+  <text x="1620" y="478" text-anchor="middle" font-size="10" fill="#1c4a78">CH2: 30.0V/3A</text>
+  <text x="1700" y="478" text-anchor="middle" font-size="10" fill="#1c4a78">CH3: 30.0V/3A</text>
+  <text x="1540" y="496" text-anchor="middle" font-size="10" fill="#1c4a78">0.00 V / 0.00 A</text>
+  <text x="1620" y="496" text-anchor="middle" font-size="10" fill="#1c4a78">0.00 V / 0.00 A</text>
+  <text x="1700" y="496" text-anchor="middle" font-size="10" fill="#1c4a78">0.00 V / 0.00 A</text>
+  <rect x="1560" y="512" width="120" height="22" rx="11" fill="#dfe3e6"/>
+  <text x="1620" y="527" text-anchor="middle" font-size="9" fill="#555">AYARLAR</text>
+  <path d="M1600,430 L1600,400 L1378,400 L1378,400" fill="none" stroke="#8e44ec" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <line x1="1378" y1="400" x2="1378" y2="430" stroke="#8e44ec" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#arrowPurple)"/>
+
+  <!-- ===================== HABERLEŞME / PLC / HMI ===================== -->
+  <g>
+    <rect x="20" y="700" width="330" height="170" rx="8" fill="#ffffff" stroke="#bbb" stroke-width="1.2"/>
+    <text x="35" y="722" font-size="12" font-weight="bold" fill="#333">Bağlantı / Hat Renkleri</text>
+    <line x1="35" y1="738" x2="70" y2="738" stroke="#2ca25f" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="78" y="742" font-size="10" fill="#333">RS-485 – MFC</text>
+    <line x1="35" y1="756" x2="70" y2="756" stroke="#e08214" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="78" y="760" font-size="10" fill="#333">RS-485 – V-OVG</text>
+    <line x1="35" y1="774" x2="70" y2="774" stroke="#2f6fb0" stroke-width="2" stroke-dasharray="2 3"/>
+    <text x="78" y="778" font-size="10" fill="#333">24 V DC – Valfler</text>
+    <line x1="35" y1="792" x2="70" y2="792" stroke="#8e44ec" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="78" y="796" font-size="10" fill="#333">TCP/IP – HMI/SCADA</text>
+    <line x1="35" y1="812" x2="70" y2="812" stroke="#2f6fb0" stroke-width="2.5"/>
+    <text x="78" y="816" font-size="10" fill="#333">Proses Gaz Hattı</text>
+    <line x1="35" y1="830" x2="70" y2="830" stroke="#9a9a9a" stroke-width="2"/>
+    <text x="78" y="834" font-size="10" fill="#333">Sensör Temizleme / Bypass Hattı</text>
+    <rect x="35" y="843" width="35" height="14" rx="4" fill="#fff1e0" stroke="#d17a1f" stroke-width="1.4"/>
+    <text x="78" y="854" font-size="10" fill="#333">Tahliye Valfi / Çıkış-Egzoz</text>
+  </g>
+
+  <line x1="470" y1="700" x2="470" y2="800" stroke="#2ca25f" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="470" y="695" text-anchor="middle" font-size="10" fill="#2ca25f">RS-485 (MFC)</text>
+  <text x="470" y="815" text-anchor="middle" font-size="9" fill="#2ca25f">MFC-1..4</text>
+
+  <line x1="650" y1="700" x2="650" y2="800" stroke="#e08214" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="650" y="695" text-anchor="middle" font-size="10" fill="#e08214">RS-485 (V-OVG)</text>
+  <text x="650" y="815" text-anchor="middle" font-size="9" fill="#e08214">V-OVG1..4</text>
+
+  <line x1="850" y1="700" x2="850" y2="800" stroke="#2f6fb0" stroke-width="2" stroke-dasharray="2 3"/>
+  <text x="850" y="695" text-anchor="middle" font-size="10" fill="#2f6fb0">24 V DC (Valfler)</text>
+  <text x="850" y="815" text-anchor="middle" font-size="9" fill="#2f6fb0">Valf 1-8, 13-16</text>
+
+  <rect x="380" y="800" width="620" height="90" rx="10" fill="#4a5568"/>
+  <text x="690" y="850" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">PLC – TÜM KONTROL VE HABERLEŞME</text>
+
+  <line x1="1000" y1="845" x2="1350" y2="845" stroke="#8e44ec" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrowPurple)"/>
+  <text x="1175" y="835" text-anchor="middle" font-size="10" fill="#8e44ec">TCP/IP (HMI/SCADA)</text>
+
+  <rect x="1352" y="790" width="240" height="110" rx="10" fill="#eef6ff" stroke="#2f6fb0" stroke-width="1.6"/>
+  <text x="1472" y="835" text-anchor="middle" font-size="13" font-weight="bold" fill="#1c4a78">HMI / SCADA</text>
+  <text x="1472" y="855" text-anchor="middle" font-size="10" fill="#1c4a78">TCP/IP üzerinden</text>
+  <text x="1472" y="870" text-anchor="middle" font-size="10" fill="#1c4a78">arayüz kontrolü</text>
+</svg>

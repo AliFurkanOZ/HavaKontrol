@@ -1,0 +1,561 @@
+<UserControl x:Class="hava_kontrol.Views.RecipeDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:hava_kontrol.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="1100">
+
+    <!-- Modal Zemin Kartı -->
+    <Border Background="White"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="12"
+            Padding="20"
+            MaxWidth="1150"
+            MaxHeight="780">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.30" Color="#0F172A" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- 0. Başlık & Kapat Butonu -->
+                <RowDefinition Height="Auto" />
+                <!-- 1. Canlı Durum ve İlerleme Bildirim Çubuğu -->
+                <RowDefinition Height="Auto" />
+                <!-- 2. Ana Çalışma Alanı (Sol: Adımlar Tablosu, Sağ: Ürün ve Adım Ayar Formu) -->
+                <RowDefinition Height="*" />
+                <!-- 3. Alt Kontrol Butonları (Başlat / Duraklat / Devam Et / İptal Et) -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 0. Başlık Barı -->
+            <Grid Grid.Row="0" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="36" Height="36" Background="#EFF6FF" CornerRadius="8" Margin="0,0,12,0">
+                        <TextBlock Text="⚡" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="REÇETE MODU VE OTOMASYON SEKANS YÖNETİCİSİ"
+                                       FontWeight="Bold" FontSize="15"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <!-- Yürütme Modu Rozeti -->
+                            <Border Background="#F1F5F9" CornerRadius="4" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding RecipeEngine.CurrentRecipe.ExecutionModeText, FallbackValue='Ürüne Özel Kuyruk'}"
+                                           FontSize="10" FontWeight="SemiBold" Foreground="#475569" />
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Sistemdeki ürünleri adım adım yapılandırın; araya adım ekleyin veya ürüne özel sıralı akışı başlatın."
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Kapat (✕) -->
+                <Button Grid.Column="1"
+                        Content="✕"
+                        Command="{Binding ToggleRecipeModalCommand}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource TextMutedBrush}"
+                        Cursor="Hand"
+                        Padding="8,4" />
+            </Grid>
+
+            <!-- 1. Durum / Canlı İlerleme Bildirim Çubuğu -->
+            <StackPanel Grid.Row="1" Margin="0,0,0,12">
+                <!-- Reçete Çalışırken / Duraklatıldığında Görünen Canlı Bildirim Kartı -->
+                <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8"
+                        Padding="12,10" Margin="0,0,0,8"
+                        Visibility="{Binding IsRecipeRunning, Converter={StaticResource BoolToVis}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="10" Height="10" CornerRadius="5" Background="#22C55E" Margin="0,0,10,0" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Reçete Şu Anda Yürütülüyor — Manuel Donanım Değişiklikleri Kilitlenmiştir"
+                                       FontSize="11" FontWeight="Bold" Foreground="#1E293B" />
+                            <TextBlock Text="{Binding RecipeProgressText}"
+                                       FontSize="12" FontWeight="SemiBold" Foreground="#16A34A" Margin="0,2,0,0" FontFamily="{StaticResource MonoFont}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Toplam Süre: " FontSize="11" Foreground="#64748B" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding RecipeEngine.TotalElapsedSeconds, StringFormat={}{0} sn}"
+                                       FontWeight="Bold" FontSize="12" FontFamily="{StaticResource MonoFont}" Foreground="#0F172A" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Reçete Adı, Açıklaması ve Dosya Butonları -->
+                <Grid Background="#F1F5F9" Margin="0,0,0,4" Grid.ColumnSpan="2" Height="38">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Reçete Adı:" FontWeight="Bold" FontSize="11" Foreground="#475569"
+                               VerticalAlignment="Center" Margin="10,0,6,0" />
+
+                    <TextBox Grid.Column="1"
+                             x:Name="TxtRecipeName"
+                             Text="{Binding RecipeEngine.CurrentRecipe.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontWeight="SemiBold" FontSize="12" Height="26"
+                             VerticalContentAlignment="Center" Padding="6,0"
+                             BorderBrush="#CBD5E1" Background="White" Margin="0,0,10,0" />
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <Button Content="📄 Yeni Reçete"
+                                Click="BtnNewRecipe_Click"
+                                Style="{StaticResource NeutralButton}"
+                                Height="26" Padding="8,0" FontSize="11" Margin="0,0,5,0" />
+                        <Button Content="📂 Reçete Yükle"
+                                Click="BtnLoadRecipe_Click"
+                                Style="{StaticResource NeutralButton}"
+                                Height="26" Padding="8,0" FontSize="11" Margin="0,0,5,0" />
+                        <Button Content="💾 Reçeteyi Kaydet"
+                                Click="BtnSaveRecipe_Click"
+                                Style="{StaticResource NeutralButton}"
+                                Height="26" Padding="8,0" FontSize="11" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <!-- 2. Ana Çalışma Alanı (Sol: Adımlar Tablosu, Sağ: Ürün ve Adım Ayar Formu) -->
+            <Grid Grid.Row="2" Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <!-- Sol Kolon: Adımlar Tablosu ve Sıralama Araçları (60%) -->
+                    <ColumnDefinition Width="3*" />
+                    <!-- Sağ Kolon: Ürün Seçimi ve Özellik Yapılandırma Paneli (40%) -->
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- SOL KOLON: ADIMLAR TABLOSU VE YÖNETİM BUTONLARI -->
+                <Grid Grid.Column="0" Margin="0,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Adımlar DataGrid -->
+                    <DataGrid x:Name="StepsDataGrid"
+                              Grid.Row="0"
+                              ItemsSource="{Binding RecipeEngine.CurrentRecipe.Steps}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserSortColumns="False"
+                              CanUserReorderColumns="False"
+                              SelectionMode="Single"
+                              SelectionChanged="StepsDataGrid_SelectionChanged"
+                              BorderThickness="1"
+                              BorderBrush="#E2E8F0"
+                              Background="#F8FAFC"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F8FAFC"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#F1F5F9"
+                              FontSize="11">
+                        <DataGrid.Columns>
+                            <!-- Adım No -->
+                            <DataGridTextColumn Header="#" Binding="{Binding StepNumber, Mode=OneWay}" Width="32" IsReadOnly="True" />
+
+                            <!-- Ürün / Cihaz -->
+                            <DataGridTemplateColumn Header="Ürün / Cihaz" Width="120" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#EFF6FF" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding DeviceDisplayName, Mode=OneWay}" FontWeight="SemiBold" Foreground="#1E40AF" FontSize="11" />
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Adım Tanımı -->
+                            <DataGridTextColumn Header="Adım Tanımı" Binding="{Binding Name, Mode=TwoWay}" Width="130" />
+
+                            <!-- Yapılandırılan Ayarlar (Özet) -->
+                            <DataGridTextColumn Header="Ayarlanan Parametreler" Binding="{Binding ParametersSummary, Mode=OneWay}" Width="*" IsReadOnly="True" />
+
+                            <!-- Süre (sn) -->
+                            <DataGridTextColumn Header="Süre" Binding="{Binding DurationFormatted, Mode=OneWay}" Width="55" IsReadOnly="True" />
+
+                            <!-- Bitiş Aksiyonu (Koru / Kapat) -->
+                            <DataGridTemplateColumn Header="Bitişte" Width="80" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="4,2" HorizontalAlignment="Left" Background="#F1F5F9">
+                                            <TextBlock Text="{Binding EndActionText, Mode=OneWay}" FontWeight="SemiBold" FontSize="10" Foreground="{Binding EndActionBrush, Mode=OneWay}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Canlı Durum ve Kalan Süre -->
+                            <DataGridTemplateColumn Header="Durum" Width="100" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding StatusText, Mode=OneWay}" FontWeight="Bold" FontSize="10" Foreground="{Binding StatusBrush, Mode=OneWay}" />
+                                            <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" Margin="0,2,0,0"
+                                                         Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Adım Yönetim Araç Çubuğu -->
+                    <Grid Grid.Row="1" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Ekle / Sil / Araya Ekle Butonları -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Button Content="➕ Sona Ekle"
+                                    Click="BtnAddStepEnd_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11" Margin="0,0,5,0"
+                                    ToolTip="Yeni adımı listenin sonuna ekler" />
+
+                            <Button Content="⤵️ Araya Ekle"
+                                    Click="BtnInsertStep_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11" Margin="0,0,5,0"
+                                    ToolTip="Seçili adımın arasına/önüne yeni adım ekler" />
+
+                            <Button Content="✏️ Düzenle"
+                                    Click="BtnEditSelectedStep_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11" Margin="0,0,5,0"
+                                    ToolTip="Seçili adımın ayarlarını düzenleme paneline yükler" />
+
+                            <Button Content="🗑 Sil"
+                                    Click="BtnDeleteStep_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11"
+                                    ToolTip="Seçili adımı reçeteden kaldırır" />
+                        </StackPanel>
+
+                        <!-- Sıralama Butonları (Yukarı / Aşağı) -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Content="⬆️ Yukarı"
+                                    Click="BtnMoveUp_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11" Margin="0,0,4,0"
+                                    ToolTip="Seçili adımı bir yukarı taşır" />
+
+                            <Button Content="⬇️ Aşağı"
+                                    Click="BtnMoveDown_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Padding="8,4" Height="28" FontSize="11"
+                                    ToolTip="Seçili adımı bir aşağı taşır" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- SAĞ KOLON: ÜRÜN SEÇİMİ VE ÖZELLİK AYARLAMA KARTI -->
+                <Border Grid.Column="1"
+                        Background="#F8FAFC"
+                        BorderBrush="#CBD5E1"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="14">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- Panel Başlığı -->
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtFormModeTitle"
+                                           Text="🔧 ADIM YAPILANDIRMASI"
+                                           FontWeight="Bold" FontSize="12" Foreground="#0F172A" VerticalAlignment="Center" />
+                                <Border x:Name="BadgeStepNumber" Grid.Column="1" Background="#E0F2FE" CornerRadius="4" Padding="6,2">
+                                    <TextBlock x:Name="TxtStepNumberBadge" Text="Yeni Adım" FontSize="10" FontWeight="Bold" Foreground="#0369A1" />
+                                </Border>
+                            </Grid>
+
+                            <!-- 1. ÜRÜN SEÇİMİ (Sistemdeki Ürünler) -->
+                            <TextBlock Text="1. Sistem Ürünü / Cihaz Seçin:" FontWeight="Bold" FontSize="11" Foreground="#334155" Margin="0,0,0,4" />
+                            <ComboBox x:Name="CmbProductList"
+                                      Height="28"
+                                      FontSize="11"
+                                      SelectionChanged="CmbProductList_SelectionChanged"
+                                      Margin="0,0,0,10" />
+
+                            <!-- 2. ADIM ADI & TANIMI -->
+                            <TextBlock Text="2. Adım Tanımı:" FontWeight="Bold" FontSize="11" Foreground="#334155" Margin="0,0,0,4" />
+                            <TextBox x:Name="TxtStepName"
+                                     Text="V-OVG 1 Ön Isıtma"
+                                     Height="26" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" Margin="0,0,0,10" />
+
+                            <!-- 3. ÜRÜNE ÖZEL DİNAMİK PARAMETRE ALANLARI -->
+                            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="3. Ürün Özellik Ayarları:" FontWeight="Bold" FontSize="11" Foreground="#0F172A" Margin="0,0,0,8" />
+
+                                    <!-- A. MFC PARAMETRELERİ (Debi & Akış) -->
+                                    <StackPanel x:Name="PanelMfcSettings" Visibility="Collapsed">
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Hedef Debi (sccm):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtMfcFlow" Grid.Column="1" Text="100.0" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Akış Kontrolü:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <CheckBox x:Name="ChkMfcFlowEnabled" Grid.Column="1" Content="Akış AÇIK" IsChecked="True" FontSize="11" FontWeight="SemiBold" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- B. V-OVG PARAMETRELERİ (Sıcaklık & Akış) -->
+                                    <StackPanel x:Name="PanelVovgSettings" Visibility="Visible">
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Fırın Sıcaklığı (°C):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtVovgTemp" Grid.Column="1" Text="25.0" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Taşıyıcı Gaz Debisi (sccm):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtVovgFlow" Grid.Column="1" Text="50.0" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- C. VALF PARAMETRELERİ (Açık / Kapalı) -->
+                                    <StackPanel x:Name="PanelValveSettings" Visibility="Collapsed">
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Valf Pozisyonu:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <CheckBox x:Name="ChkValveOpen" Grid.Column="1" Content="AÇIK (ON)" IsChecked="True" FontSize="11" FontWeight="Bold" Foreground="#16A34A" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- D. PLC GÜÇ ÇIKIŞI PARAMETRELERİ -->
+                                    <StackPanel x:Name="PanelPowerOutputSettings" Visibility="Collapsed">
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Çıkış Röle Durumu:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <CheckBox x:Name="ChkPowerOutputOpen" Grid.Column="1" Content="AKTİF (ON)" IsChecked="True" FontSize="11" FontWeight="Bold" Foreground="#2563EB" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- E. RIGOL DP831 GÜÇ KAYNAĞI PARAMETRELERİ -->
+                                    <StackPanel x:Name="PanelPowerSupplySettings" Visibility="Collapsed">
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Gerilim (V):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtPsVoltage" Grid.Column="1" Text="5.00" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Akım Sınırı (A):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtPsCurrent" Grid.Column="1" Text="1.00" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Kanal Çıkışı:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <CheckBox x:Name="ChkPsOutputOpen" Grid.Column="1" Content="ÇIKIŞ AÇIK" IsChecked="True" FontSize="11" FontWeight="Bold" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- F. KEYSIGHT SMU / ELEKTROMETRE PARAMETRELERİ -->
+                                    <StackPanel x:Name="PanelSmuSettings" Visibility="Collapsed">
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Kaynak Modu:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <RadioButton x:Name="RadSmuVolt" Content="Voltaj (V)" IsChecked="True" FontSize="11" Margin="0,0,8,0" />
+                                                <RadioButton x:Name="RadSmuCurr" Content="Akım (mA)" FontSize="11" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Kaynak Değeri:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtSmuValue" Grid.Column="1" Text="1.00" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="90" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Sınır (Compliance):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <TextBox x:Name="TxtSmuCompliance" Grid.Column="1" Text="0.05" Height="24" FontSize="11" VerticalContentAlignment="Center" Padding="4,0" HorizontalContentAlignment="Right" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="SMU Çıkışı:" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                            <CheckBox x:Name="ChkSmuOutputOpen" Grid.Column="1" Content="ÇIKIŞ AÇIK" IsChecked="True" FontSize="11" FontWeight="Bold" />
+                                        </Grid>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 4. ZAMAN / SÜRE AYARI (Saniye) -->
+                            <TextBlock Text="4. Adım Süresi (Zaman Ayarı):" FontWeight="Bold" FontSize="11" Foreground="#334155" Margin="0,0,0,4" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Süre (Saniye):" FontSize="11" Foreground="#475569" VerticalAlignment="Center" />
+                                <TextBox x:Name="TxtDurationSeconds" Grid.Column="1" Text="300" Height="26" FontSize="12" FontWeight="Bold"
+                                         VerticalContentAlignment="Center" HorizontalContentAlignment="Center" TextChanged="TxtDurationSeconds_TextChanged" />
+                                <TextBlock x:Name="TxtDurationPreview" Grid.Column="2" Text="(05:00 dk)" FontSize="11" Foreground="#64748B"
+                                           VerticalAlignment="Center" Margin="6,0,0,0" />
+                            </Grid>
+
+                            <!-- Hızlı Süre Butonları -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <Button Content="30s" Click="BtnQuickDuration_Click" Tag="30" Style="{StaticResource NeutralButton}" Height="22" Padding="6,0" FontSize="10" Margin="0,0,4,0" />
+                                <Button Content="60s" Click="BtnQuickDuration_Click" Tag="60" Style="{StaticResource NeutralButton}" Height="22" Padding="6,0" FontSize="10" Margin="0,0,4,0" />
+                                <Button Content="120s" Click="BtnQuickDuration_Click" Tag="120" Style="{StaticResource NeutralButton}" Height="22" Padding="6,0" FontSize="10" Margin="0,0,4,0" />
+                                <Button Content="300s" Click="BtnQuickDuration_Click" Tag="300" Style="{StaticResource NeutralButton}" Height="22" Padding="6,0" FontSize="10" Margin="0,0,4,0" />
+                                <Button Content="600s" Click="BtnQuickDuration_Click" Tag="600" Style="{StaticResource NeutralButton}" Height="22" Padding="6,0" FontSize="10" />
+                            </StackPanel>
+
+                            <!-- 5. SÜRE BİTTİĞİNDE CİHAZ AKSİYONU -->
+                            <Border Background="#F1F5F9" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="8,6" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="5. Süre Bittiğinde Cihaz Durumu:" FontWeight="Bold" FontSize="11" Foreground="#334155" Margin="0,0,0,4" />
+                                    <RadioButton x:Name="RadEndKeepState" IsChecked="True" FontSize="11" Margin="0,0,0,3">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Mevcut Durumu Koru / Devam Et (Varsayılan)" FontWeight="SemiBold" Foreground="#16A34A" />
+                                            <TextBlock Text="Ayar açık kalır, bir sonraki adım için gereksiz aç-kapa yapılmaz." FontSize="9.5" Foreground="#64748B" />
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <RadioButton x:Name="RadEndTurnOff" FontSize="11" Margin="0,2,0,0">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="Cihazı Kapat / Sıfırla" FontWeight="SemiBold" Foreground="#DC2626" />
+                                            <TextBlock Text="Süre bitince bu cihazın akışı/çıkışı kapatılır ve sıfırlanır." FontSize="9.5" Foreground="#64748B" />
+                                        </StackPanel>
+                                    </RadioButton>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- 6. ONAY / EKLE BUTONLARI -->
+                            <Button x:Name="BtnSaveStep"
+                                    Content="✅ Bu Adımı Onayla ve Ekle"
+                                    Click="BtnSaveStep_Click"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Height="32" FontSize="12" FontWeight="Bold" Margin="0,0,0,6" />
+
+                            <Button Content="Temizle / Yeni Adım Modu"
+                                    Click="BtnCancelEdit_Click"
+                                    Style="{StaticResource NeutralButton}"
+                                    Height="26" FontSize="11" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!-- 3. Alt Yürütme ve Kontrol Çubuğu -->
+            <Border Grid.Row="3" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Yürütme Butonları (Başlat, Duraklat, Devam Et, İptal Et) -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Başlat -->
+                        <Button Content="▶ Reçeteyi Başlat"
+                                Command="{Binding StartRecipeCommand}"
+                                Style="{StaticResource PrimaryButton}"
+                                Height="34" Padding="16,0" Margin="0,0,8,0"
+                                FontSize="12" FontWeight="Bold"
+                                ToolTip="Tüm ürün ayarlarını aktif edip süreyi başlatır" />
+
+                        <!-- Durdur (Duraklat) -->
+                        <Button Content="⏸ Durdur (Duraklat)"
+                                Command="{Binding PauseRecipeCommand}"
+                                Style="{StaticResource NeutralButton}"
+                                Height="34" Padding="14,0" Margin="0,0,8,0"
+                                FontSize="12"
+                                ToolTip="Ayarlar aynı kalır, zaman sayımı durdurulur" />
+
+                        <!-- Devam Et -->
+                        <Button Content="▶ Devam Et"
+                                Command="{Binding ResumeRecipeCommand}"
+                                Style="{StaticResource NeutralButton}"
+                                Height="34" Padding="14,0" Margin="0,0,8,0"
+                                FontSize="12"
+                                ToolTip="Kaldığı yerden zaman akışına devam eder" />
+
+                        <!-- İptal Et -->
+                        <Button Content="⏹ İptal Et &amp; Sıfırla"
+                                Command="{Binding CancelRecipeCommand}"
+                                Style="{StaticResource NeutralButton}"
+                                Height="34" Padding="14,0"
+                                Foreground="#DC2626" FontSize="12" FontWeight="Bold"
+                                ToolTip="Sekansı sonlandırır ve tüm cihazları güvenli varsayılana döndürür" />
+                    </StackPanel>
+
+                    <!-- Kapat Butonu -->
+                    <Button Grid.Column="1"
+                            Content="Kapat"
+                            Command="{Binding ToggleRecipeModalCommand}"
+                            Style="{StaticResource NeutralButton}"
+                            Height="34" Padding="20,0"
+                            FontSize="12" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

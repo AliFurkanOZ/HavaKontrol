@@ -1,0 +1,433 @@
+<Window x:Class="hava_kontrol.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:hava_kontrol.Views"
+        mc:Ignorable="d"
+        Title="Gas Flow &amp; Vapor Control System | Hava Kontrol SCADA"
+        Icon="app_icon.ico"
+        WindowState="Maximized"
+        Width="1920" Height="1080"
+        MinWidth="1280" MinHeight="800"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}"
+        FontFamily="{StaticResource AppFont}">
+
+    <Grid>
+        <!-- ======================================================= -->
+        <!-- KATMAN 0: ANA DASHBOARD (1920x1080 TEK EKRAN - NO SCROLL) -->
+        <!-- ======================================================= -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- 0. Üst Durum Çubuğu (~56px) -->
+                <RowDefinition Height="Auto" />
+                <!-- 1. Ana Çalışma Alanı: Sol Kolon (P&ID + Grafik) & Sağ Kolon (Cihaz + Günlük) -->
+                <RowDefinition Height="*" />
+                <!-- 2. Alt Bilgi / Veri Tazeliği Çubuğu (~24px) -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- 0. ÜST DURUM ÇUBUĞU (TEK KIRMIZI BUTON: ACİL DURDUR)   -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Row="0"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    Padding="16,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <!-- Sol: Sistem Başlığı, Sistem Durumu & İnterlock -->
+                        <ColumnDefinition Width="Auto" />
+                        <!-- Orta: Konsolide Cihaz Sağlığı Özeti (Açılır Rozet) -->
+                        <ColumnDefinition Width="*" />
+                        <!-- Sağ: Reçete Modu & ACİL DURDUR -->
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Sol Bölüm -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Logo & Başlık -->
+                        <Border Width="34" Height="34" Background="#EFF6FF" CornerRadius="8" Margin="0,0,10,0">
+                            <TextBlock Text="⚙" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="GAS FLOW &amp; VAPOR CONTROL SYSTEM"
+                                       FontSize="15" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Hava Kontrol SCADA | Laboratuvar Gaz Akış &amp; Buharlaşma Test Platformu"
+                                       FontSize="10" Foreground="{StaticResource TextMutedBrush}" />
+                        </StackPanel>
+
+                        <!-- Dikey Ayraç -->
+                        <Rectangle Width="1" Height="28" Fill="#E2E8F0" Margin="16,0" VerticalAlignment="Center" />
+
+                        <!-- Genel Sistem Durumu Rozeti -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="{Binding SystemStateColor}"
+                                BorderThickness="1.5"
+                                CornerRadius="6"
+                                Padding="10,4"
+                                VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="10" Height="10"
+                                         Fill="{Binding SystemStateColor}"
+                                         Margin="0,0,8,0"
+                                         VerticalAlignment="Center" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding SystemStateText}"
+                                               FontWeight="Bold" FontSize="11"
+                                               Foreground="{Binding SystemStateColor}" />
+                                    <TextBlock Text="{Binding SystemStateSubtitle}"
+                                               FontSize="9" FontWeight="Medium"
+                                               Foreground="{StaticResource TextSecondaryBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Dikey Ayraç -->
+                        <Rectangle Width="1" Height="28" Fill="#E2E8F0" Margin="12,0" VerticalAlignment="Center" />
+
+                        <!-- İnterlock Rozeti -->
+                        <Border Background="#F8FAFC"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="8,4"
+                                VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🔒" FontSize="10" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                <Ellipse Width="7" Height="7"
+                                         Fill="{Binding InterlockColor}"
+                                         Margin="0,0,5,0"
+                                         VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding InterlockText}"
+                                           FontSize="10" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Orta Bölüm: Cihaz Sağlığı Özeti (Tıklanabilir Rozet) -->
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Command="{Binding ToggleDeviceHealthFlyoutCommand}"
+                                Background="#F1F5F9"
+                                BorderBrush="#CBD5E1"
+                                BorderThickness="1"
+                                Padding="14,6"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="16"
+                                            Padding="{TemplateBinding Padding}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="{Binding DeviceHealthSummaryColor}"
+                                                     Margin="0,0,6,0"
+                                                     VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding DeviceHealthSummaryText}"
+                                                       FontWeight="Bold" FontSize="11"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center" />
+                                            <TextBlock Text=" ▾" FontSize="10"
+                                                       Foreground="{StaticResource TextMutedBrush}"
+                                                       VerticalAlignment="Center" Margin="2,0,0,0" />
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Button.ToolTip>
+                                <ToolTip Content="Cihaz bağlantı durumlarını ve port ayarlarını açmak için tıklayın" />
+                            </Button.ToolTip>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Sağ Bölüm: Reçete Modu & ACİL DURDUR -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Reçete Modu Butonu -->
+                        <Button Content="⚡ Reçete Modu"
+                                Command="{Binding ToggleRecipeModalCommand}"
+                                Style="{StaticResource NeutralButton}"
+                                Height="38" Padding="14,0" Margin="0,0,12,0"
+                                FontSize="12" FontWeight="SemiBold" />
+
+                        <!-- ACİL DURDUR — EKRANDAKİ TEK BÜYÜK KIRMIZI BUTON -->
+                        <Button Content="🚨 ACİL DURDUR"
+                                Command="{Binding EmergencyStopCommand}"
+                                Style="{StaticResource EmergencyStopButton}"
+                                Height="40" Padding="22,0"
+                                FontSize="13" FontWeight="Bold"
+                                ToolTip="Tüm valfleri kapatır, MFC akışlarını keser, HV ve DC kaynakları anında durdurur!" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- 1. ANA ÇALIŞMA ALANI: BAĞIMSIZ DİKEY AYARLI KOLONLAR   -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <!-- Sol Kolon: P&ID Şeması + Trend Grafiği (~62%) -->
+                    <ColumnDefinition Width="1.6*" />
+                    <!-- Sağ Kolon: Cihaz Detay + Olay ve Alarm Günlüğü (~38%) -->
+                    <ColumnDefinition Width="1.0*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ─────────────────────────────────────────────────── -->
+                <!-- SOL KOLON: P&ID (Üst) + TREND GRAFİĞİ (Alt)        -->
+                <!-- ─────────────────────────────────────────────────── -->
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <!-- P&ID Şeması: Şemaya tam oturacak oranda (boşluksuz, genişletilmiş) -->
+                        <RowDefinition Height="2.1*" />
+                        <!-- Canlı Trend Grafiği: Yükseltilmiş, geniş çizim alanı -->
+                        <RowDefinition Height="1.0*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- P&ID Şeması -->
+                    <views:ProcessFlowDiagramView Grid.Row="0" Margin="8,6,4,4" />
+
+                    <!-- Trend Grafiği -->
+                    <views:TrendGraphView Grid.Row="1" Margin="8,4,4,4" />
+                </Grid>
+
+                <!-- ─────────────────────────────────────────────────── -->
+                <!-- SAĞ KOLON: CİHAZ DENETLEYİCİ (Üst) + GÜNLÜK (Alt)  -->
+                <!-- ─────────────────────────────────────────────────── -->
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <!-- Cihaz Denetleyici & Metrik Paneli: Geniş, yüksek alan -->
+                        <RowDefinition Height="2.1*" />
+                        <!-- Olay ve Alarm Günlüğü: Rahat okunabilir çalışma alanı -->
+                        <RowDefinition Height="1.0*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Cihaz Denetleyici & Metrik Paneli -->
+                    <views:DeviceDetailView Grid.Row="0" Margin="4,6,8,4" />
+
+                    <!-- Olay ve Alarm Günlüğü -->
+                    <views:EventLogView Grid.Row="1" Margin="4,4,8,4" />
+                </Grid>
+            </Grid>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- 2. ALT BİLGİ / VERİ TAZELİĞİ ÇUBUĞU                    -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    Padding="14,3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <!-- Sol: Veri Tazeliği -->
+                        <ColumnDefinition Width="Auto" />
+                        <!-- Orta: Alarm / Güvenlik Durumu -->
+                        <ColumnDefinition Width="*" />
+                        <!-- Sağ: Son Güncelleme -->
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding DataFreshnessText}"
+                               FontSize="10"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding AlarmText}"
+                               Foreground="{Binding AlarmColor}"
+                               FontSize="11" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+
+                    <TextBlock Grid.Column="2"
+                               Text="{Binding LastUpdateText}"
+                               FontSize="10"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ======================================================= -->
+        <!-- KATMAN 1: CİHAZ SAĞLIĞI & PORT AYARLARI FLYOUT MODAL     -->
+        <!-- ======================================================= -->
+        <Grid Background="#40000000"
+              Visibility="{Binding IsDeviceHealthFlyoutOpen, Converter={StaticResource BoolToVis}}">
+            <Border Background="White"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="20"
+                    Width="680"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="6" Opacity="0.2" Color="#0F172A" />
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Başlık Barı -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🔌" FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center" />
+                            <TextBlock Text="CİHAZ VE HABERLEŞME DURUMU"
+                                       FontWeight="Bold" FontSize="14"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Content="✕"
+                                Command="{Binding ToggleDeviceHealthFlyoutCommand}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontSize="16" FontWeight="Bold"
+                                Foreground="{StaticResource TextMutedBrush}"
+                                Cursor="Hand" Padding="6,2" />
+                    </Grid>
+
+                    <!-- 4 Cihaz Kartı (2x2) -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 1. PLC (Delta AS228P) -->
+                        <Border Grid.Row="0" Grid.Column="0"
+                                Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="6" Padding="12" Margin="0,0,6,8">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="DELTA AS228P PLC" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <Ellipse Width="8" Height="8" Fill="{Binding PlcStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <TextBlock Text="Protokol: Modbus TCP (Port 502)" FontSize="10" Foreground="{StaticResource TextMutedBrush}" />
+                                <TextBlock Text="Adres: 192.168.1.5" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,8" />
+                                <TextBlock Text="{Binding PlcStatusText}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                                <Button Content="PLC Yeniden Bağlan"
+                                        Command="{Binding ConnectPlcCommand}"
+                                        Style="{StaticResource NeutralButton}"
+                                        Height="28" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 2. Keysight B2902B SMU / Elektrometre -->
+                        <Border Grid.Row="0" Grid.Column="1"
+                                Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="6" Padding="12" Margin="6,0,0,8">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="KEYSIGHT B2902B SMU" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <Ellipse Width="8" Height="8" Fill="{Binding Electrometer.ConnectionStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <TextBlock Text="Protokol: USB-TMC / VISA" FontSize="10" Foreground="{StaticResource TextMutedBrush}" />
+                                <Grid Margin="0,4,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Port:" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <ComboBox Grid.Column="1"
+                                              ItemsSource="{Binding Electrometer.AvailableComPorts}"
+                                              SelectedItem="{Binding Electrometer.SelectedComPort}"
+                                              Height="24" FontSize="11" />
+                                </Grid>
+                                <Button Content="{Binding Electrometer.ConnectButtonText}"
+                                        Command="{Binding ConnectKeithleyCommand}"
+                                        Style="{StaticResource NeutralButton}"
+                                        Height="28" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 3. Rigol DP831 Güç Kaynağı -->
+                        <Border Grid.Row="1" Grid.Column="0"
+                                Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="6" Padding="12" Margin="0,6,6,0">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="RIGOL DP831 (DC GÜÇ)" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <Ellipse Width="8" Height="8" Fill="{Binding PowerSupply.ConnectionStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <TextBlock Text="Protokol: RS-232/USB (9600 Baud)" FontSize="10" Foreground="{StaticResource TextMutedBrush}" />
+                                <Grid Margin="0,4,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Port:" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                    <ComboBox Grid.Column="1"
+                                              ItemsSource="{Binding PowerSupply.AvailableComPorts}"
+                                              SelectedItem="{Binding PowerSupply.SelectedComPort}"
+                                              Height="24" FontSize="11" />
+                                </Grid>
+                                <Button Content="{Binding PowerSupply.ConnectButtonText}"
+                                        Command="{Binding ConnectDp831Command}"
+                                        Style="{StaticResource NeutralButton}"
+                                        Height="28" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 4. V-OVG Fırın & Akış Sistemi -->
+                        <Border Grid.Row="1" Grid.Column="1"
+                                Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1"
+                                CornerRadius="6" Padding="12" Margin="6,6,0,0">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,6">
+                                    <TextBlock Text="V-OVG FIRIN / AKIŞ" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextPrimaryBrush}" />
+                                    <Ellipse Width="8" Height="8" Fill="{Binding VovgStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <TextBlock Text="Protokol: Modbus RTU (COM12 RS485)" FontSize="10" Foreground="{StaticResource TextMutedBrush}" />
+                                <TextBlock Text="Eurotherm #3 (Temp), #4 (Flow)" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,8" />
+                                <TextBlock Text="{Binding VovgStatusText}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,8" />
+                                <Button Content="V-OVG Yeniden Bağlan"
+                                        Command="{Binding ConnectVovgCommand}"
+                                        Style="{StaticResource NeutralButton}"
+                                        Height="28" FontSize="11" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Kapat Butonu -->
+                    <Button Grid.Row="2"
+                            Content="Kapat"
+                            Command="{Binding ToggleDeviceHealthFlyoutCommand}"
+                            Style="{StaticResource NeutralButton}"
+                            Height="32" Margin="0,14,0,0"
+                            FontSize="12" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ======================================================= -->
+        <!-- KATMAN 2: REÇETE (OTOMATİK SEKANS) MODAL PENCERESİ       -->
+        <!-- ======================================================= -->
+        <Grid Background="#80000000"
+              Visibility="{Binding IsRecipeModalOpen, Converter={StaticResource BoolToVis}}">
+            <views:RecipeDialogView HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="40" />
+        </Grid>
+    </Grid>
+</Window>

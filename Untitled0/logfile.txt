@@ -1,0 +1,1 @@
+1|***|2026-09-22 15:14:37.8042|***|9676|***|1|***|INFO|***|HWCONFIG.Form_Main.SaveUserProject|***|Project saved successfully.\r\nProject directory: C:\ProgramData\Delta Industrial Automation\ISPSoft_New\Projects\Untitled0 

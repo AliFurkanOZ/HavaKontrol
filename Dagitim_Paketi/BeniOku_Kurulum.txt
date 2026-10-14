@@ -1,0 +1,67 @@
+================================================================================
+  HAVA KONTROL - GAS FLOW & VAPOR CONTROL SYSTEM
+  KURULUM VE KULLANIM REHBERİ
+================================================================================
+
+Bu paket, uygulamanın harici bilgisayarlarda bağımsız (Self-Contained) olarak
+çalışabilmesi için tüm .NET 8 kütüphaneleri ve bağımlılıkları tek bir EXE dosyasına
+gömülerek hazırlanmıştır.
+
+--------------------------------------------------------------------------------
+1. BAŞKA BİLGİSAYARA KURULUM / ÇALIŞTIRMA
+--------------------------------------------------------------------------------
+1. "Dagitim_Paketi" klasörünü bir USB bellek veya ağ üzerinden hedef bilgisayara 
+   kopyalayın.
+   
+2. ÖNERİLEN KONUM:
+   Klasörü doğrudan "C:\HavaKontrol" veya hedef bilgisayarın "Masaüstü" (Desktop) 
+   dizinine yapıştırın.
+   (Uygulama log dosyalarını ve kamera görüntülerini kendi klasörü altına kaydettiği 
+   için yazma izni olan bir dizinde bulunması gerekmektedir).
+
+3. KISAYOL OLUŞTURMA:
+   Klasör içindeki "Masaustu_Kisayolu_Olustur.bat" (veya .vbs) dosyasına çift 
+   tıklayarak Masaüstüne "Hava Kontrol SCADA" başlatma simgesini ekleyebilirsiniz.
+
+4. ÇALIŞTIRMA:
+   "hava_kontrol.exe" dosyasına çift tıklayarak sistemi başlatabilirsiniz.
+   HEDEF BİLGİSAYARDA .NET RUNTIME VEYA HERHANGİ BİR GELİŞTİRİCİ ARACI KURMAYA 
+   GEREK YOKTUR.
+
+--------------------------------------------------------------------------------
+2. DONANIM VE SÜRÜCÜ GEREKSİNİMLERİ
+--------------------------------------------------------------------------------
+Hedef bilgisayara fiziksel donanımlar bağlanacaksa aşağıdaki adımları kontrol edin:
+
+A) PLC & MFC (RS-485 / Seri Port Haberleşmesi):
+   - Bilgisayara bağlanan USB-RS485 veya USB-Seri dönüştürücünün Windows sürücüsü 
+     yüklü olmalıdır (Genellikle CH340, FTDI veya CP210x çipleri kullanılır).
+   - Aygıt Yöneticisi'nde "Bağlantı Noktaları (COM ve LPT)" altında portun göründüğünden 
+     emin olun (örn: COM1, COM3).
+   - Uygulama içindeki "Ayarlar / Bağlantı" ekranından ilgili COM portu seçip 
+     bağlanabilirsiniz.
+
+B) V-OVG Kameraları (USB Web/Endüstriyel Kameralar):
+   - Windows 10/11 standart UVC kameraları doğrudan tanır.
+   - Çok nadir durumlarda, sıfır formatlanmış temiz Windows kurulumlarında OpenCV 
+     görüntü kütüphanesinin ihtiyaç duyduğu Visual C++ çalışma zamanı eksik olabilir.
+     Eğer kamera açılırken bir hata oluşursa, Microsoft'un resmi kütüphanesini kurun:
+     https://aka.ms/vs/17/release/vc_redist.x64.exe
+
+--------------------------------------------------------------------------------
+3. OTOMATİK OLUŞTURULAN DOSYALAR VE DİZİNLER
+--------------------------------------------------------------------------------
+Program ilk kez çalıştığında kendi klasörü altında şu yapıları yönetir:
+
+- Logs/                : Günlük sistem olayları ve oturum CSV kayıtları (Excel uyumlu).
+- Captures/V-OVG/      : V-OVG kameralarından alınan anlık fotoğraflar (Snapshot).
+- camera_config.json   : Kamera cihaz eşleştirmeleri ve FPS konfigürasyonu.
+
+--------------------------------------------------------------------------------
+Teknik Bilgi:
+- Uygulama: Hava Kontrol SCADA
+- Sistem: Gas Flow & Vapor Control System
+- Versiyon: 1.0.0
+- Platform: Windows 64-bit (x64)
+- Mimari: .NET 8 WPF Standalone Single-File
+================================================================================

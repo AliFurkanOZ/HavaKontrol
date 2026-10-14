@@ -1,0 +1,454 @@
+<UserControl x:Class="hava_kontrol.Views.ElectrometerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:hava_kontrol.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="420" d:DesignWidth="430">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource CardBorder}" Padding="12,8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- 0. Başlık & Port & CH -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <!-- 1. Ana İçerik -->
+                <RowDefinition Height="*" />
+                <!-- 2. Hata Mesajı -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- 1. BAŞLIK + KANAL SEÇİMİ + BAĞLANTI -->
+            <Grid Grid.Row="0" Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="⚡" FontSize="15" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="#8B5CF6" />
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="KEYSIGHT B2902B" Style="{StaticResource SectionTitle}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Text="2-CH SMU" Style="{StaticResource MutedText}" FontSize="9" FontWeight="Bold"
+                                       VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#8B5CF6" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Kanal Seçim Butonları (CH1 / CH2) -->
+                    <Border Background="#F1F5F9" CornerRadius="12" Padding="2" Margin="8,0,0,0" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="CH1" Command="{Binding Electrometer.SelectChannel1Command}"
+                                    Width="34" Height="22" FontSize="9" FontWeight="Bold" Padding="0" Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#64748B" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Electrometer.IsChannel1Selected}" Value="True">
+                                                <Setter Property="Background" Value="#8B5CF6" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="CH2" Command="{Binding Electrometer.SelectChannel2Command}"
+                                    Width="34" Height="22" FontSize="9" FontWeight="Bold" Padding="0" Cursor="Hand">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#64748B" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Electrometer.IsChannel2Selected}" Value="True">
+                                                <Setter Property="Background" Value="#8B5CF6" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8"
+                             Fill="{Binding Electrometer.ConnectionStatusColor}"
+                             VerticalAlignment="Center"
+                             Margin="0,0,6,0" />
+                    <ComboBox ItemsSource="{Binding Electrometer.AvailableComPorts}"
+                              SelectedItem="{Binding Electrometer.SelectedComPort}"
+                              Width="105" Height="26" FontSize="10"
+                              VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <Button Content="{Binding Electrometer.ConnectButtonText}"
+                            Command="{Binding Electrometer.ConnectCommand}"
+                            Style="{StaticResource OutlineButton}"
+                            Height="26" Padding="8,0" FontSize="10" FontWeight="Bold" />
+                </StackPanel>
+            </Grid>
+
+            <Rectangle Grid.Row="1" Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,0,0,6" />
+
+            <!-- 2. ANA İÇERİK -->
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <!-- Ölçüm Fonksiyonu Seçimi -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Büyük Ölçüm Göstergesi & 3'lü Telemetri -->
+                    <RowDefinition Height="Auto" />
+                    <!-- Kaynak (V/I) Giriş ve Kontrol Paneli -->
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- 1. Ölçüm Modu Butonları (Akım, Voltaj, Direnç) -->
+                <Grid Grid.Row="0" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="ÖLÇÜM:" Style="{StaticResource MutedText}"
+                               FontSize="10" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0" />
+
+                    <UniformGrid Grid.Column="1" Columns="3">
+                        <Button Content="AKIM (A)" Command="{Binding Electrometer.SetCurrentFuncCommand}"
+                                Height="24" FontSize="9.5" FontWeight="Bold" Margin="0,0,2,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Electrometer.IsCurrentMode}" Value="True">
+                                            <Setter Property="Background" Value="#8B5CF6" />
+                                            <Setter Property="Foreground" Value="White" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="VOLTAJ (V)" Command="{Binding Electrometer.SetVoltageFuncCommand}"
+                                Height="24" FontSize="9.5" FontWeight="Bold" Margin="2,0,2,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Electrometer.IsVoltageMode}" Value="True">
+                                            <Setter Property="Background" Value="#8B5CF6" />
+                                            <Setter Property="Foreground" Value="White" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="DİRENÇ (Ω)" Command="{Binding Electrometer.SetResistanceFuncCommand}"
+                                Height="24" FontSize="9.5" FontWeight="Bold" Margin="2,0,0,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OutlineButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Electrometer.IsResistanceMode}" Value="True">
+                                            <Setter Property="Background" Value="#8B5CF6" />
+                                            <Setter Property="Foreground" Value="White" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </UniformGrid>
+                </Grid>
+
+                <!-- 2. Büyük Ölçüm Değeri + Canlı 3'lü Telemetri Çubuğu -->
+                <Border Grid.Row="1" Background="#0B1120" BorderBrush="#1E293B" BorderThickness="1"
+                        CornerRadius="8" Padding="10,6" Margin="0,0,0,6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Üst Bilgi & HV Uyarısı -->
+                        <Grid Grid.Row="0">
+                            <TextBlock Text="{Binding Electrometer.FunctionText, StringFormat='KANAL • {0}'}"
+                                       FontSize="9" FontWeight="SemiBold" Foreground="#64748B"
+                                       HorizontalAlignment="Left" />
+
+                            <!-- HV Uyarı Rozeti -->
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    Background="#7F1D1D" BorderBrush="#EF4444" BorderThickness="1"
+                                    CornerRadius="3" Padding="4,1"
+                                    Visibility="{Binding Electrometer.HasHvWarning, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="⚠ HV >42V" FontSize="8" FontWeight="Bold" Foreground="#FCA5A5" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Büyük Değer -->
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding Electrometer.MeasurementText}"
+                                   FontFamily="{StaticResource MonoFont}"
+                                   FontSize="26" FontWeight="Bold"
+                                   Foreground="#38BDF8"
+                                   HorizontalAlignment="Center" Margin="0,2,0,4" />
+
+                        <!-- Canlı 3'lü Telemetri Çubuğu (I, V, R Bir Arada) -->
+                        <Border Grid.Row="2" Background="#1E293B" CornerRadius="4" Padding="6,3" Margin="0,2,0,0">
+                            <UniformGrid Columns="3">
+                                <!-- Canlı Akım -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="I: " FontSize="9" FontWeight="Bold" Foreground="#94A3B8" />
+                                    <TextBlock Text="{Binding Electrometer.CurrentText}" FontSize="9.5" FontWeight="Bold"
+                                               FontFamily="{StaticResource MonoFont}" Foreground="#C084FC" />
+                                </StackPanel>
+                                <!-- Canlı Gerilim -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="V: " FontSize="9" FontWeight="Bold" Foreground="#94A3B8" />
+                                    <TextBlock Text="{Binding Electrometer.VoltageText}" FontSize="9.5" FontWeight="Bold"
+                                               FontFamily="{StaticResource MonoFont}" Foreground="#FBBF24" />
+                                </StackPanel>
+                                <!-- Canlı Direnç -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="R: " FontSize="9" FontWeight="Bold" Foreground="#94A3B8" />
+                                    <TextBlock Text="{Binding Electrometer.ResistanceText}" FontSize="9.5" FontWeight="Bold"
+                                               FontFamily="{StaticResource MonoFont}" Foreground="#34D399" />
+                                </StackPanel>
+                            </UniformGrid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- 3. KAYNAK AYARLARI (VOLTAJ / AKIM GİRİŞİ) VE ÇIKIŞ KONTROLÜ -->
+                <Border Grid.Row="2" Background="{StaticResource BgBrush}"
+                        BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1"
+                        CornerRadius="8" Padding="8,6">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!-- Kaynak Modu Seçimi (V-Source / I-Source Tab) -->
+                            <RowDefinition Height="Auto" />
+                            <!-- Değer Girişleri & SET -->
+                            <RowDefinition Height="Auto" />
+                            <!-- ON / OFF Çıkış Butonları & Durum -->
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Üst Bar: Mod Seçimi & Aktif Çıkış Durumu -->
+                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- V-Source / I-Source Seçim Sekmesi -->
+                            <Border Grid.Column="0" Background="#E2E8F0" CornerRadius="10" Padding="1" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="VOLTAJ KAYNAĞI"
+                                            Command="{Binding Electrometer.SetVoltageSourceModeCommand}"
+                                            Height="20" Padding="8,0" FontSize="8.5" FontWeight="Bold" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Foreground" Value="#64748B" />
+                                                <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Electrometer.IsVoltageSourceMode}" Value="True">
+                                                        <Setter Property="Background" Value="#3B82F6" />
+                                                        <Setter Property="Foreground" Value="White" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Content="AKIM KAYNAĞI"
+                                            Command="{Binding Electrometer.SetCurrentSourceModeCommand}"
+                                            Height="20" Padding="8,0" FontSize="8.5" FontWeight="Bold" Cursor="Hand">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Foreground" Value="#64748B" />
+                                                <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Electrometer.IsVoltageSourceMode}" Value="False">
+                                                        <Setter Property="Background" Value="#8B5CF6" />
+                                                        <Setter Property="Foreground" Value="White" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Çıkış Durumu ve Ayarlı Değer Özeti -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse Width="7" Height="7"
+                                         Fill="{Binding Electrometer.OutputStatusColor}"
+                                         VerticalAlignment="Center" Margin="0,0,4,0" />
+                                <TextBlock Text="{Binding Electrometer.OutputStatusText}"
+                                           Foreground="{Binding Electrometer.OutputStatusColor}"
+                                           FontSize="9.5" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,4,0" />
+                                <TextBlock Text="{Binding Electrometer.SourceModeText}"
+                                           FontSize="9.5" FontWeight="Bold"
+                                           Foreground="{StaticResource PrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Giriş Satırı: V-Source veya I-Source Alanları -->
+                        <Grid Grid.Row="1" Margin="0,0,0,6">
+                            <!-- A. VOLTAJ KAYNAĞI GİRİŞLERİ (IsVoltageSourceMode == True) -->
+                            <Grid Visibility="{Binding Electrometer.IsVoltageSourceMode, Converter={StaticResource BoolToVisibility}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Hedef V:" Style="{StaticResource MutedText}"
+                                               FontSize="9.5" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,3,0" />
+                                    <TextBox Text="{Binding Electrometer.VoltageSourceInput, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource ModernTextBox}"
+                                             Width="50" Height="24" FontSize="10" FontWeight="Bold"
+                                             HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="V" Style="{StaticResource CardTitle}"
+                                               VerticalAlignment="Center" Margin="2,0,8,0" FontSize="9.5" FontWeight="Bold" />
+
+                                    <TextBlock Text="I Limiti:" Style="{StaticResource MutedText}"
+                                               FontSize="9.5" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,3,0" />
+                                    <TextBox Text="{Binding Electrometer.CurrentComplianceInput, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource ModernTextBox}"
+                                             Width="45" Height="24" FontSize="10" FontWeight="Bold"
+                                             HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="mA" Style="{StaticResource CardTitle}"
+                                               VerticalAlignment="Center" Margin="2,0,6,0" FontSize="9.5" FontWeight="Bold" />
+                                </StackPanel>
+
+                                <Button Grid.Column="1" Content="SET V"
+                                        Command="{Binding Electrometer.ApplyVoltageSourceCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Padding="10,0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+
+                            <!-- B. AKIM KAYNAĞI GİRİŞLERİ (IsVoltageSourceMode == False) -->
+                            <Grid>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Electrometer.IsVoltageSourceMode}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Hedef I:" Style="{StaticResource MutedText}"
+                                               FontSize="9.5" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,3,0" />
+                                    <TextBox Text="{Binding Electrometer.CurrentSourceInput, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource ModernTextBox}"
+                                             Width="50" Height="24" FontSize="10" FontWeight="Bold"
+                                             HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="mA" Style="{StaticResource CardTitle}"
+                                               VerticalAlignment="Center" Margin="2,0,8,0" FontSize="9.5" FontWeight="Bold" />
+
+                                    <TextBlock Text="V Limiti:" Style="{StaticResource MutedText}"
+                                               FontSize="9.5" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,3,0" />
+                                    <TextBox Text="{Binding Electrometer.VoltageComplianceInput, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource ModernTextBox}"
+                                             Width="45" Height="24" FontSize="10" FontWeight="Bold"
+                                             HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+                                    <TextBlock Text="V" Style="{StaticResource CardTitle}"
+                                               VerticalAlignment="Center" Margin="2,0,6,0" FontSize="9.5" FontWeight="Bold" />
+                                </StackPanel>
+
+                                <Button Grid.Column="1" Content="SET I"
+                                        Command="{Binding Electrometer.ApplyCurrentSourceCommand}"
+                                        Background="#8B5CF6" Foreground="White"
+                                        Height="24" Padding="10,0" FontSize="9" FontWeight="Bold">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                            <Setter Property="Background" Value="#8B5CF6" />
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Alt Satır: Ayrı Hızlı ON ve OFF Çıkış Butonları -->
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="ÇIKIŞ KONTROLÜ:" Style="{StaticResource MutedText}"
+                                       FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Content="OUTPUT ON"
+                                        Command="{Binding Electrometer.TurnOnOutputCommand}"
+                                        Style="{StaticResource SuccessButton}"
+                                        Height="24" Padding="10,0" FontSize="9.5" FontWeight="Bold" Margin="0,0,6,0" />
+                                <Button Content="OUTPUT OFF"
+                                        Command="{Binding Electrometer.TurnOffOutputCommand}"
+                                        Style="{StaticResource DangerButton}"
+                                        Height="24" Padding="10,0" FontSize="9.5" FontWeight="Bold" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- 3. HATA MESAJI -->
+            <TextBlock Grid.Row="3"
+                       Text="{Binding Electrometer.ErrorMessage}"
+                       Visibility="{Binding Electrometer.HasError, Converter={StaticResource BoolToVisibility}}"
+                       Foreground="{StaticResource DangerBrush}"
+                       FontSize="10" Margin="0,3,0,0" />
+        </Grid>
+    </Border>
+</UserControl>

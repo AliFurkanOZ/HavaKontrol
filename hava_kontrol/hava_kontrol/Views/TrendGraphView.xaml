@@ -1,0 +1,535 @@
+<UserControl x:Class="hava_kontrol.Views.TrendGraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="320" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <!-- Lejant Kanal Açma/Kapama Toggle Stili -->
+        <Style x:Key="LegendToggleStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#EFF6FF" />
+            <Setter Property="BorderBrush" Value="#3B82F6" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="5,2" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.38" />
+                                <Setter TargetName="bd" Property="Background" Value="#F1F5F9" />
+                                <Setter TargetName="bd" Property="BorderBrush" Value="#CBD5E1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border x:Name="ChartOuterBorder"
+            Background="White"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="10,8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- 0. Üst Araç Çubuğu: Modlar, Durum, Zoom, Süre ve Dışa Aktarma -->
+                <RowDefinition Height="Auto" />
+                <!-- 1. Tıklanabilir Kanal Lejantı & Canlı Değerler -->
+                <RowDefinition Height="Auto" />
+                <!-- 2. Grafik Çizim Alanı (Y-Eksenleri + Canvas) -->
+                <RowDefinition Height="*" />
+                <!-- 3. Alt Eksen Zaman Etiketleri -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ============================================ -->
+            <!-- 0. ÜST KONTROL ARAÇ ÇUBUĞU                   -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="0" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <!-- Sol: Sekme Seçiciler -->
+                    <ColumnDefinition Width="Auto" />
+                    <!-- Orta: Canlı / Geçmiş İnceleme Durumu -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Sağ: Zoom, Süre ve Dışa Aktar Butonları -->
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- A. Sekme Seçiciler (Pill Container) -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📈" FontSize="13" Margin="0,0,5,0" VerticalAlignment="Center" />
+                    <Border Background="#F1F5F9" CornerRadius="10" Padding="2" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- 1. MFC Akışları Sekmesi -->
+                            <RadioButton x:Name="RbMfcTrend" Content="MFC AKIŞLARI"
+                                         IsChecked="True"
+                                         GroupName="TrendModeGroup"
+                                         Height="22" Padding="7,0" FontSize="9" FontWeight="Bold"
+                                         Checked="OnTrendModeChanged" Cursor="Hand">
+                                <RadioButton.Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#64748B" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="RadioButton">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="#2563EB" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </RadioButton.Style>
+                            </RadioButton>
+
+                            <!-- 2. Keysight SMU V-I-R Sekmesi -->
+                            <RadioButton x:Name="RbKeysightTrend" Content="⚡ SMU (V-I-R)"
+                                         GroupName="TrendModeGroup"
+                                         Height="22" Padding="7,0" FontSize="9" FontWeight="Bold"
+                                         Checked="OnTrendModeChanged" Cursor="Hand">
+                                <RadioButton.Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#64748B" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="RadioButton">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="#8B5CF6" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </RadioButton.Style>
+                            </RadioButton>
+
+                            <!-- 3. V-OVG Fırın Sekmesi -->
+                            <RadioButton x:Name="RbVovgTrend" Content="🔥 V-OVG FIRIN"
+                                         GroupName="TrendModeGroup"
+                                         Height="22" Padding="7,0" FontSize="9" FontWeight="Bold"
+                                         Checked="OnTrendModeChanged" Cursor="Hand">
+                                <RadioButton.Style>
+                                    <Style TargetType="RadioButton">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="#64748B" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="RadioButton">
+                                                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="#EA580C" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </RadioButton.Style>
+                            </RadioButton>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- B. Orta: Canlı Akış / Geçmiş İnceleme Durumu -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Border x:Name="LiveStatusBadge" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="3,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse x:Name="LiveIndicatorDot" Width="6" Height="6" Fill="#10B981" Margin="0,0,4,0" VerticalAlignment="Center" />
+                            <TextBlock x:Name="TxtLiveStatus" Text="CANLI TAKİP" FontSize="9" FontWeight="Bold" Foreground="#1E40AF" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Canlı Akışa Geri Dön Butonu (Geçmiş İncelendiğinde Görünür) -->
+                    <Button x:Name="BtnResumeLive" Click="OnResumeLiveClicked" Content="⏮ Canlıya Dön"
+                            Visibility="Collapsed"
+                            Background="#F59E0B" Foreground="White" BorderThickness="0"
+                            FontWeight="Bold"
+                            Height="22" Padding="7,0" FontSize="9" Margin="3,0,0,0" Cursor="Hand"
+                            ToolTip="Geçmiş incelemeden çıkıp en son canlı akışa geri döner">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+
+                <!-- C. Sağ: Zoom, Dinamik Ölçek, Süre ve Dışa Aktarma Butonları -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Dinamik Otomatik Y-Ölçekleme Toggle Butonu -->
+                    <ToggleButton x:Name="BtnAutoYScale" Content="🎯 Oto Y"
+                                  IsChecked="True" Click="OnAutoYScaleClicked"
+                                  Height="22" Padding="5,0" Margin="0,0,4,0"
+                                  FontSize="9" FontWeight="Bold" Cursor="Hand"
+                                  ToolTip="Açık: Y-Eksenini görünür verinin tepe ve tabanına göre otomatik ölçekler (küçük değişimler net görünür)&#x0a;Kapalı: 0 tabanlı sabit ölçek kullanır">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="Background" Value="#F8FAFC" />
+                                <Setter Property="Foreground" Value="#475569" />
+                                <Setter Property="BorderBrush" Value="#CBD5E1" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border x:Name="bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="bd" Property="Background" Value="#EFF6FF" />
+                                                    <Setter TargetName="bd" Property="BorderBrush" Value="#2563EB" />
+                                                    <Setter Property="Foreground" Value="#1D4ED8" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                    <!-- Zoom Araçları (➕ ➖) -->
+                    <Border Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Padding="1" Margin="0,0,4,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="BtnZoomIn" Click="OnZoomInClicked" Content="➕" Width="20" Height="20" Padding="0" BorderThickness="0" Background="Transparent" FontSize="9" FontWeight="Bold" Cursor="Hand" ToolTip="Yakınlaş (Süreyi Daralt)" />
+                            <Button x:Name="BtnZoomOut" Click="OnZoomOutClicked" Content="➖" Width="20" Height="20" Padding="0" BorderThickness="0" Background="Transparent" FontSize="9" FontWeight="Bold" Cursor="Hand" ToolTip="Uzaklaş (Süreyi Genişlet)" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Zaman Aralığı Seçici (Açılır Kutu: 1 dk'dan 8-9 saate kadar) -->
+                    <ComboBox x:Name="CbTimeRange" SelectionChanged="OnTimeRangeSelectionChanged"
+                              Height="22" Width="80" FontSize="9" FontWeight="SemiBold"
+                              VerticalContentAlignment="Center" Margin="0,0,4,0"
+                              ToolTip="Görüntülenecek zaman penceresi süresi (8-9 saatlik uzun testler dahil)">
+                        <ComboBoxItem Content="1 dk" Tag="60" />
+                        <ComboBoxItem Content="5 dk" Tag="300" />
+                        <ComboBoxItem Content="10 dk" Tag="600" IsSelected="True" />
+                        <ComboBoxItem Content="30 dk" Tag="1800" />
+                        <ComboBoxItem Content="1 saat" Tag="3600" />
+                        <ComboBoxItem Content="4 saat" Tag="14400" />
+                        <ComboBoxItem Content="8 saat" Tag="28800" />
+                        <ComboBoxItem Content="TÜMÜ" Tag="0" />
+                    </ComboBox>
+
+                    <!-- PNG Dışa Aktarma Butonu -->
+                    <Button x:Name="BtnExportPng" Click="OnExportPngClicked"
+                            Style="{StaticResource NeutralButton}"
+                            Height="22" Padding="6,0" Margin="0,0,3,0"
+                            Cursor="Hand" ToolTip="Grafiği PNG resmi olarak kaydet">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📷" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                            <TextBlock Text="PNG" FontSize="8.5" FontWeight="Bold" Foreground="#334155" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- CSV Dışa Aktarma Butonu -->
+                    <Button x:Name="BtnExportCsv" Click="OnExportCsvClicked"
+                            Style="{StaticResource NeutralButton}"
+                            Height="22" Padding="6,0"
+                            Cursor="Hand" ToolTip="Grafik verilerini CSV / Excel tablosu olarak kaydet">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="📑" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                            <TextBlock Text="CSV" FontSize="8.5" FontWeight="Bold" Foreground="#334155" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- 1. TIKLANABİLİR KANAL LEJANTI                -->
+            <!-- ============================================ -->
+            <Border Grid.Row="1" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="5" Padding="5,2" Margin="0,0,0,4">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- B1. MFC 1-4 Tıklanabilir Lejantı -->
+                    <StackPanel x:Name="MfcLegendPanel" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Visible">
+                        <!-- MFC 1 (Mavi) -->
+                        <ToggleButton x:Name="BtnToggleMfc1" IsChecked="True" Click="OnToggleChannelClicked" Tag="MFC1"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      ToolTip="Tıklayarak MFC-1 çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#3B82F6" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="MFC-1: " FontSize="9" FontWeight="Bold" Foreground="#1E40AF" />
+                                <TextBlock x:Name="TxtMfc1Act" Text="0.0" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#1E40AF" />
+                                <TextBlock x:Name="TxtMfc1Sp" Text="/0" FontSize="8" Foreground="#60A5FA" FontFamily="{StaticResource MonoFont}" Margin="1,0,0,0" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- MFC 2 (Zümrüt Yeşil) -->
+                        <ToggleButton x:Name="BtnToggleMfc2" IsChecked="True" Click="OnToggleChannelClicked" Tag="MFC2"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#ECFDF5" BorderBrush="#10B981"
+                                      ToolTip="Tıklayarak MFC-2 çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#10B981" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="MFC-2: " FontSize="9" FontWeight="Bold" Foreground="#047857" />
+                                <TextBlock x:Name="TxtMfc2Act" Text="0.0" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#047857" />
+                                <TextBlock x:Name="TxtMfc2Sp" Text="/0" FontSize="8" Foreground="#34D399" FontFamily="{StaticResource MonoFont}" Margin="1,0,0,0" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- MFC 3 (Amber/Turuncu) -->
+                        <ToggleButton x:Name="BtnToggleMfc3" IsChecked="True" Click="OnToggleChannelClicked" Tag="MFC3"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#FFFBEB" BorderBrush="#F59E0B"
+                                      ToolTip="Tıklayarak MFC-3 çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#F59E0B" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="MFC-3: " FontSize="9" FontWeight="Bold" Foreground="#B45309" />
+                                <TextBlock x:Name="TxtMfc3Act" Text="0.0" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#B45309" />
+                                <TextBlock x:Name="TxtMfc3Sp" Text="/0" FontSize="8" Foreground="#FBBF24" FontFamily="{StaticResource MonoFont}" Margin="1,0,0,0" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- MFC 4 (Pembe/Mor) -->
+                        <ToggleButton x:Name="BtnToggleMfc4" IsChecked="True" Click="OnToggleChannelClicked" Tag="MFC4"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#FDF2F8" BorderBrush="#EC4899"
+                                      ToolTip="Tıklayarak MFC-4 çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#EC4899" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="MFC-4: " FontSize="9" FontWeight="Bold" Foreground="#BE185D" />
+                                <TextBlock x:Name="TxtMfc4Act" Text="0.0" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#BE185D" />
+                                <TextBlock x:Name="TxtMfc4Sp" Text="/0" FontSize="8" Foreground="#F472B6" FontFamily="{StaticResource MonoFont}" Margin="1,0,0,0" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <TextBlock Text="━ Ölçülen   ┅ Hedef" FontSize="8" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="5,0,0,0" />
+                    </StackPanel>
+
+                    <!-- B2. Keysight SMU Lejantı -->
+                    <StackPanel x:Name="KeysightLegendPanel" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                        <!-- Gerilim (V) -->
+                        <ToggleButton x:Name="BtnToggleSmuV" IsChecked="True" Click="OnToggleChannelClicked" Tag="SMU_V"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#FEF3C7" BorderBrush="#F59E0B"
+                                      ToolTip="Tıklayarak Gerilim (V) çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#F59E0B" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="Gerilim: " FontSize="9" Foreground="#B45309" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtSmuVoltageValue" Text="0.00 V" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#B45309" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- Akım (I) -->
+                        <ToggleButton x:Name="BtnToggleSmuI" IsChecked="True" Click="OnToggleChannelClicked" Tag="SMU_I"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#F5F3FF" BorderBrush="#8B5CF6"
+                                      ToolTip="Tıklayarak Akım (I) çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#8B5CF6" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="Akım: " FontSize="9" Foreground="#6D28D9" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtSmuCurrentValue" Text="0.00 pA" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#6D28D9" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- Direnç (R) -->
+                        <ToggleButton x:Name="BtnToggleSmuR" IsChecked="True" Click="OnToggleChannelClicked" Tag="SMU_R"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#ECFDF5" BorderBrush="#10B981"
+                                      ToolTip="Tıklayarak Direnç (R) çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#10B981" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="Direnç: " FontSize="9" Foreground="#047857" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtSmuResistanceValue" Text="--- Ω" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#047857" />
+                            </StackPanel>
+                        </ToggleButton>
+                    </StackPanel>
+
+                    <!-- B3. V-OVG Fırın Lejantı -->
+                    <StackPanel x:Name="VovgLegendPanel" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                        <!-- Fırın Sıcaklık -->
+                        <ToggleButton x:Name="BtnToggleVovgTemp" IsChecked="True" Click="OnToggleChannelClicked" Tag="VOVG_TEMP"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#FFF7ED" BorderBrush="#EA580C"
+                                      ToolTip="Tıklayarak Sıcaklık çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#EA580C" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="Sıcaklık: " FontSize="9" Foreground="#C2410C" FontWeight="Bold" />
+                                <TextBlock x:Name="TxtVovgTempPV" Text="0.0 °C" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#C2410C" />
+                                <TextBlock x:Name="TxtVovgTempSP" Text=" / 0 °C" FontSize="8" Foreground="#FB923C" FontFamily="{StaticResource MonoFont}" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <!-- Fırın Taşıyıcı Gaz Akışı -->
+                        <ToggleButton x:Name="BtnToggleVovgFlow" IsChecked="True" Click="OnToggleChannelClicked" Tag="VOVG_FLOW"
+                                      Style="{StaticResource LegendToggleStyle}"
+                                      Background="#F0F9FF" BorderBrush="#0284C7"
+                                      ToolTip="Tıklayarak Taşıyıcı Akış çizgisini gizleyin veya gösterin">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Rectangle Width="7" Height="7" Fill="#0284C7" Margin="0,0,3,0" RadiusX="2" RadiusY="2" />
+                                <TextBlock Text="Taşıyıcı Akış: " FontSize="9" Foreground="#0369A1" FontWeight="Bold" />
+                                <TextBlock x:Name="TxtVovgFlowPV" Text="0 sccm" FontSize="9" FontWeight="Bold" FontFamily="{StaticResource MonoFont}" Foreground="#0369A1" />
+                                <TextBlock x:Name="TxtVovgFlowSP" Text=" / 0 sccm" FontSize="8" Foreground="#38BDF8" FontFamily="{StaticResource MonoFont}" />
+                            </StackPanel>
+                        </ToggleButton>
+
+                        <TextBlock Text="━ Ölçülen   ┅ Hedef" FontSize="8" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="5,0,0,0" />
+                    </StackPanel>
+
+                    <!-- Sağ İpucu Bildirimi -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🖱️ Tekerlek: Zoom · Sürükle: Geçmişe Kaydır"
+                                   FontSize="8" Foreground="#94A3B8" VerticalAlignment="Center" Margin="4,0,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================================ -->
+            <!-- 2. GRAFİK ÇİZİM ALANI VE EKSENLER            -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <!-- Sol Y-Eksen Etiketleri -->
+                    <ColumnDefinition Width="48" />
+                    <!-- Çizim Canvas -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Sağ Y-Eksen Etiketleri -->
+                    <ColumnDefinition Width="54" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Sol Eksen Etiketleri (3 Tık Noktası) -->
+                <Grid Grid.Column="0" Margin="0,2,4,2">
+                    <TextBlock x:Name="TxtYLeftMax" Text="1000" FontSize="8.5" FontWeight="Bold" Foreground="#2563EB" VerticalAlignment="Top" HorizontalAlignment="Right" />
+                    <TextBlock x:Name="TxtYLeftMid" Text="500" FontSize="8" FontWeight="SemiBold" Foreground="#2563EB" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                    <TextBlock x:Name="TxtYLeftMin" Text="0 sccm" FontSize="8.5" FontWeight="SemiBold" Foreground="#2563EB" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
+                </Grid>
+
+                <!-- Çizim Canvas & Koyu Izgara -->
+                <Border x:Name="ChartCaptureArea" Grid.Column="1" Background="#080E1A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="5" ClipToBounds="True">
+                    <Canvas x:Name="ChartCanvas"
+                            ClipToBounds="True"
+                            SizeChanged="ChartCanvas_SizeChanged"
+                            MouseMove="ChartCanvas_MouseMove"
+                            MouseLeave="ChartCanvas_MouseLeave"
+                            MouseWheel="ChartCanvas_MouseWheel"
+                            MouseLeftButtonDown="ChartCanvas_MouseLeftButtonDown"
+                            MouseLeftButtonUp="ChartCanvas_MouseLeftButtonUp">
+
+                        <!-- Yatay Izgara Çizgileri -->
+                        <Line x:Name="GridLineTop" Stroke="#1E293B" StrokeDashArray="3 3" StrokeThickness="1" />
+                        <Line x:Name="GridLineMid" Stroke="#1E293B" StrokeDashArray="3 3" StrokeThickness="1" />
+                        <Line x:Name="GridLineBottom" Stroke="#1E293B" StrokeDashArray="3 3" StrokeThickness="1" />
+
+                        <!-- Dikey Izgara Çizgileri -->
+                        <Line x:Name="GridV1" Stroke="#141E2E" StrokeDashArray="2 3" StrokeThickness="1" />
+                        <Line x:Name="GridV2" Stroke="#1E293B" StrokeDashArray="2 3" StrokeThickness="1" />
+                        <Line x:Name="GridV3" Stroke="#141E2E" StrokeDashArray="2 3" StrokeThickness="1" />
+
+                        <!-- ============================================ -->
+                        <!-- A. MFC Çizgileri                             -->
+                        <!-- ============================================ -->
+                        <!-- MFC 1 (Mavi) -->
+                        <Polyline x:Name="Mfc1ActLine" Stroke="#3B82F6" StrokeThickness="2" StrokeLineJoin="Round" />
+                        <Polyline x:Name="Mfc1SpLine" Stroke="#60A5FA" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" />
+
+                        <!-- MFC 2 (Zümrüt Yeşil) -->
+                        <Polyline x:Name="Mfc2ActLine" Stroke="#10B981" StrokeThickness="2" StrokeLineJoin="Round" />
+                        <Polyline x:Name="Mfc2SpLine" Stroke="#34D399" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" />
+
+                        <!-- MFC 3 (Amber / Turuncu) -->
+                        <Polyline x:Name="Mfc3ActLine" Stroke="#F59E0B" StrokeThickness="2" StrokeLineJoin="Round" />
+                        <Polyline x:Name="Mfc3SpLine" Stroke="#FBBF24" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" />
+
+                        <!-- MFC 4 (Pembe / Gül) -->
+                        <Polyline x:Name="Mfc4ActLine" Stroke="#EC4899" StrokeThickness="2" StrokeLineJoin="Round" />
+                        <Polyline x:Name="Mfc4SpLine" Stroke="#F472B6" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" />
+
+                        <!-- ============================================ -->
+                        <!-- B. Keysight SMU V-I-R Çizgileri             -->
+                        <!-- ============================================ -->
+                        <Polyline x:Name="SmuVoltageLine" Stroke="#F59E0B" StrokeThickness="2" StrokeLineJoin="Round" Visibility="Collapsed" />
+                        <Polyline x:Name="SmuCurrentLine" Stroke="#8B5CF6" StrokeThickness="2" StrokeLineJoin="Round" Visibility="Collapsed" />
+                        <Polyline x:Name="SmuResistanceLine" Stroke="#10B981" StrokeThickness="1.8" StrokeDashArray="4 2" StrokeLineJoin="Round" Visibility="Collapsed" />
+
+                        <!-- ============================================ -->
+                        <!-- C. V-OVG Fırın Çizgileri                    -->
+                        <!-- ============================================ -->
+                        <Polyline x:Name="VovgTempPvLine" Stroke="#EA580C" StrokeThickness="2" StrokeLineJoin="Round" Visibility="Collapsed" />
+                        <Polyline x:Name="VovgTempSpLine" Stroke="#FB923C" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" Visibility="Collapsed" />
+                        <Polyline x:Name="VovgFlowPvLine" Stroke="#0284C7" StrokeThickness="2" StrokeLineJoin="Round" Visibility="Collapsed" />
+                        <Polyline x:Name="VovgFlowSpLine" Stroke="#38BDF8" StrokeThickness="1.5" StrokeDashArray="3 2" StrokeLineJoin="Round" Visibility="Collapsed" />
+
+                        <!-- Dikey Takip Çizgisi (Crosshair) -->
+                        <Line x:Name="CrosshairLine" Stroke="#38BDF8" StrokeThickness="1" StrokeDashArray="3 2" Visibility="Collapsed" />
+
+                        <!-- İmleç Kayan Değer Kutusu (HUD) -->
+                        <Border x:Name="CrosshairHud"
+                                Background="#1E293B"
+                                BorderBrush="#38BDF8"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="6,3"
+                                Visibility="Collapsed">
+                            <TextBlock x:Name="TxtCrosshairInfo" FontSize="9" FontFamily="{StaticResource MonoFont}" FontWeight="SemiBold" Foreground="#F8FAFC" />
+                        </Border>
+
+                        <!-- Boş Veri Bildirimi -->
+                        <TextBlock x:Name="TxtNoData" Text="Trend verisi bekleniyor..."
+                                   Foreground="#64748B"
+                                   FontSize="11.5" FontStyle="Italic"
+                                   Canvas.Left="20" Canvas.Top="20" />
+                    </Canvas>
+                </Border>
+
+                <!-- Sağ Eksen Etiketleri -->
+                <Grid Grid.Column="2" Margin="4,2,0,2">
+                    <TextBlock x:Name="TxtYRightMax" Text="" FontSize="8.5" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                    <TextBlock x:Name="TxtYRightMid" Text="" FontSize="8" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <TextBlock x:Name="TxtYRightMin" Text="" FontSize="8.5" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+                </Grid>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- 3. ALT EKSEN ZAMAN ETİKETLERİ                -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="3" Margin="48,3,54,0">
+                <TextBlock x:Name="TxtTimeStart" Text="-10 dk" FontSize="9" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Left" />
+                <TextBlock x:Name="TxtTimeMid" Text="-5 dk" FontSize="9" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center" />
+                <TextBlock x:Name="TxtTimeEnd" Text="Şimdi" FontSize="9" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Right" />
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

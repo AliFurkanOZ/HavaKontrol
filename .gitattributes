@@ -1,0 +1,18 @@
+# Windows line endings
+* text=auto eol=crlf
+
+# C# / WPF
+*.cs text diff=csharp
+*.xaml text
+*.csproj text
+*.sln text eol=crlf
+
+# Python (eski proje dosyaları için)
+*.py text diff=python
+
+# Binary dosyalar
+*.png binary
+*.jpg binary
+*.ico binary
+*.exe binary
+*.dll binary

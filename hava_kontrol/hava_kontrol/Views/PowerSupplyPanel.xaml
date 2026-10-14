@@ -1,0 +1,535 @@
+<UserControl x:Class="hava_kontrol.Views.PowerSupplyPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:hava_kontrol.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="350" d:DesignWidth="450">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource CardBorder}" Padding="10,6">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ============================================ -->
+            <!-- 1. BAŞLIK + BAĞLANTI (RIGOL DP831)           -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="0" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🔌" FontSize="15" VerticalAlignment="Center" Margin="0,0,5,0" />
+                    <TextBlock Text="POWER SUPPLY" Style="{StaticResource SectionTitle}" FontSize="13" VerticalAlignment="Center" />
+                    <TextBlock Text="RIGOL DP831" Style="{StaticResource MutedText}" FontSize="10" FontWeight="SemiBold"
+                               VerticalAlignment="Center" Margin="6,0,0,0" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="7" Height="7"
+                             Fill="{Binding PowerSupply.ConnectionStatusColor}"
+                             VerticalAlignment="Center"
+                             Margin="0,0,5,0" />
+                    <ComboBox ItemsSource="{Binding PowerSupply.AvailableComPorts}"
+                              SelectedItem="{Binding PowerSupply.SelectedComPort}"
+                              Width="95" Height="24" FontSize="10"
+                              VerticalAlignment="Center" Margin="0,0,3,0" />
+                    <Button Content="🔄"
+                            Command="{Binding PowerSupply.RefreshComPortsCommand}"
+                            ToolTip="Portları Yenile"
+                            Style="{StaticResource OutlineButton}"
+                            Height="24" Width="24" Padding="0" FontSize="10" Margin="0,0,4,0" />
+                    <Button Content="BAĞLAN"
+                            Command="{Binding PowerSupply.ConnectCommand}"
+                            Style="{StaticResource OutlineButton}"
+                            Height="24" Padding="8,0" FontSize="10" FontWeight="Bold" />
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- 2. ANA ÇIKIŞ (MASTER OUTPUT) BARI           -->
+            <!-- ============================================ -->
+            <Border Grid.Row="1" Background="{StaticResource BgBrush}"
+                    CornerRadius="6" Padding="8,3" Margin="0,0,0,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="TÜM ÇIKIŞLAR: " Style="{StaticResource MutedText}"
+                                   FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <Ellipse Width="7" Height="7"
+                                 Fill="{Binding PowerSupply.OutputStatusColor}"
+                                 VerticalAlignment="Center" Margin="2,0,4,0" />
+                        <TextBlock Text="{Binding PowerSupply.OutputStatusText}"
+                                   Style="{StaticResource CardTitle}"
+                                   Foreground="{Binding PowerSupply.OutputStatusColor}"
+                                   FontSize="11" FontWeight="Bold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="ON"
+                                Command="{Binding PowerSupply.AllOutputsOnCommand}"
+                                Style="{StaticResource SuccessButton}"
+                                Height="22" Width="44" Padding="0" FontSize="10" FontWeight="Bold" Margin="0,0,4,0" />
+                        <Button Content="OFF"
+                                Command="{Binding PowerSupply.AllOutputsOffCommand}"
+                                Style="{StaticResource DangerButton}"
+                                Height="22" Width="44" Padding="0" FontSize="10" FontWeight="Bold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================================ -->
+            <!-- 3. 3 KANAL YAN YANA (CH1 + CH2 + CH3)         -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ═══════════ KANAL 1 (8V / 5A) ═══════════ -->
+                <Border Grid.Column="0" Background="{StaticResource BgBrush}"
+                        CornerRadius="6" Padding="6,5" VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Kanal 1 Başlık -->
+                        <Grid Grid.Row="0" Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="7" Height="7"
+                                             Fill="{Binding PowerSupply.Ch1StatusColor}"
+                                             VerticalAlignment="Center" Margin="0,0,4,0" />
+                                    <TextBlock Text="CH1" Style="{StaticResource CardTitle}" FontSize="11" FontWeight="Bold" />
+                                </StackPanel>
+                                <TextBlock Text="8V / 5A" Style="{StaticResource MutedText}"
+                                           FontSize="9" Margin="11,0,0,0" />
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Content="{Binding PowerSupply.Ch1OutputStatusText}"
+                                    Command="{Binding PowerSupply.ToggleCh1OutputCommand}"
+                                    Style="{StaticResource OutlineButton}"
+                                    Background="{Binding PowerSupply.Ch1OutputBgBrush}"
+                                    BorderBrush="{Binding PowerSupply.Ch1OutputBorderBrush}"
+                                    Foreground="{Binding PowerSupply.Ch1StatusColor}"
+                                    Height="22" Width="46" Padding="0"
+                                    FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Kanal 1 Ölçümler (V / I / W) -->
+                        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="5" Padding="4,3" Margin="0,0,0,4"
+                                BorderThickness="1" BorderBrush="{StaticResource CardBorderBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Voltaj -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock Text="VOLTAJ" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch1VoltageActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource PrimaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Akım -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="AKIM" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch1CurrentActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource InfoBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Güç ve Ayar Özeti -->
+                                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,2,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="Güç: " Style="{StaticResource MutedText}" FontSize="8" />
+                                        <TextBlock Text="{Binding PowerSupply.Ch1PowerActualText}"
+                                                   Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding PowerSupply.Ch1SetSummary}"
+                                               Foreground="{StaticResource PrimaryBrush}" FontSize="8" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Margin="0,1,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Kanal 1 Ayarlar (V / I Set) -->
+                        <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                            <!-- Voltaj Ayar -->
+                            <Grid Margin="0,0,0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="V:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch1VoltageInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh1VoltageCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh1VoltageCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+
+                            <!-- Akım Ayar -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="I:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch1CurrentInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh1CurrentCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh1CurrentCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ═══════════ KANAL 2 (+30V / 2A) ═══════════ -->
+                <Border Grid.Column="2" Background="{StaticResource BgBrush}"
+                        CornerRadius="6" Padding="6,5" VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Kanal 2 Başlık -->
+                        <Grid Grid.Row="0" Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="7" Height="7"
+                                             Fill="{Binding PowerSupply.Ch2StatusColor}"
+                                             VerticalAlignment="Center" Margin="0,0,4,0" />
+                                    <TextBlock Text="CH2" Style="{StaticResource CardTitle}" FontSize="11" FontWeight="Bold" />
+                                </StackPanel>
+                                <TextBlock Text="+30V / 2A" Style="{StaticResource MutedText}"
+                                           FontSize="9" Margin="11,0,0,0" />
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Content="{Binding PowerSupply.Ch2OutputStatusText}"
+                                    Command="{Binding PowerSupply.ToggleCh2OutputCommand}"
+                                    Style="{StaticResource OutlineButton}"
+                                    Background="{Binding PowerSupply.Ch2OutputBgBrush}"
+                                    BorderBrush="{Binding PowerSupply.Ch2OutputBorderBrush}"
+                                    Foreground="{Binding PowerSupply.Ch2StatusColor}"
+                                    Height="22" Width="46" Padding="0"
+                                    FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Kanal 2 Ölçümler (V / I / W) -->
+                        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="5" Padding="4,3" Margin="0,0,0,4"
+                                BorderThickness="1" BorderBrush="{StaticResource CardBorderBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Voltaj -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock Text="VOLTAJ" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch2VoltageActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource PrimaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Akım -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="AKIM" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch2CurrentActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource InfoBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Güç ve Ayar Özeti -->
+                                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,2,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="Güç: " Style="{StaticResource MutedText}" FontSize="8" />
+                                        <TextBlock Text="{Binding PowerSupply.Ch2PowerActualText}"
+                                                   Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding PowerSupply.Ch2SetSummary}"
+                                               Foreground="{StaticResource PrimaryBrush}" FontSize="8" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Margin="0,1,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Kanal 2 Ayarlar (V / I Set) -->
+                        <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                            <!-- Voltaj Ayar -->
+                            <Grid Margin="0,0,0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="V:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch2VoltageInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh2VoltageCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh2VoltageCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+
+                            <!-- Akım Ayar -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="I:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch2CurrentInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh2CurrentCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh2CurrentCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ═══════════ KANAL 3 (-30V / 2A NEGATİF) ═══════════ -->
+                <Border Grid.Column="4" Background="{StaticResource BgBrush}"
+                        CornerRadius="6" Padding="6,5" VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Kanal 3 Başlık -->
+                        <Grid Grid.Row="0" Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="7" Height="7"
+                                             Fill="{Binding PowerSupply.Ch3StatusColor}"
+                                             VerticalAlignment="Center" Margin="0,0,4,0" />
+                                    <TextBlock Text="CH3" Style="{StaticResource CardTitle}" FontSize="11" FontWeight="Bold" />
+                                </StackPanel>
+                                <TextBlock Text="-30V / 2A" Foreground="{StaticResource DangerBrush}"
+                                           FontSize="9" FontWeight="SemiBold" Margin="11,0,0,0" />
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Content="{Binding PowerSupply.Ch3OutputStatusText}"
+                                    Command="{Binding PowerSupply.ToggleCh3OutputCommand}"
+                                    Style="{StaticResource OutlineButton}"
+                                    Background="{Binding PowerSupply.Ch3OutputBgBrush}"
+                                    BorderBrush="{Binding PowerSupply.Ch3OutputBorderBrush}"
+                                    Foreground="{Binding PowerSupply.Ch3StatusColor}"
+                                    Height="22" Width="46" Padding="0"
+                                    FontSize="9" FontWeight="Bold" VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Kanal 3 Ölçümler (V / I / W) -->
+                        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                                CornerRadius="5" Padding="4,3" Margin="0,0,0,4"
+                                BorderThickness="1" BorderBrush="{StaticResource CardBorderBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Voltaj -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center">
+                                    <TextBlock Text="VOLTAJ" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch3VoltageActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource DangerBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Akım -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center">
+                                    <TextBlock Text="AKIM" Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding PowerSupply.Ch3CurrentActualText}"
+                                               Style="{StaticResource CardTitle}" FontSize="14"
+                                               Foreground="{StaticResource InfoBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Güç ve Ayar Özeti -->
+                                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,2,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="Güç: " Style="{StaticResource MutedText}" FontSize="8" />
+                                        <TextBlock Text="{Binding PowerSupply.Ch3PowerActualText}"
+                                                   Style="{StaticResource MutedText}" FontSize="8" FontWeight="Bold" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding PowerSupply.Ch3SetSummary}"
+                                               Foreground="{StaticResource DangerBrush}" FontSize="8" FontWeight="SemiBold"
+                                               HorizontalAlignment="Center" Margin="0,1,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Kanal 3 Ayarlar (V / I Set) -->
+                        <StackPanel Grid.Row="2" VerticalAlignment="Center">
+                            <!-- Voltaj Ayar -->
+                            <Grid Margin="0,0,0,3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="V:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch3VoltageInput, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Negatif gerilim değeri (-30V .. 0V)"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh3VoltageCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh3VoltageCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+
+                            <!-- Akım Ayar -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="14" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="I:" Style="{StaticResource CardTitle}"
+                                           VerticalAlignment="Center" FontSize="10" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PowerSupply.Ch3CurrentInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource CompactTextBox}"
+                                         Height="24" FontSize="11" FontWeight="Bold"
+                                         GotFocus="TextBox_GotFocus"
+                                         PreviewMouseLeftButtonDown="TextBox_PreviewMouseLeftButtonDown"
+                                         HorizontalContentAlignment="Center" VerticalAlignment="Center" Margin="0,0,3,0">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Return" Command="{Binding PowerSupply.ApplyCh3CurrentCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2" Content="SET"
+                                        Command="{Binding PowerSupply.ApplyCh3CurrentCommand}"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Height="24" Width="32" Padding="0" FontSize="9" FontWeight="Bold" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- 4. HATA MESAJI                               -->
+            <!-- ============================================ -->
+            <TextBlock Grid.Row="3"
+                       Text="{Binding PowerSupply.ErrorMessage}"
+                       Visibility="{Binding PowerSupply.HasError, Converter={StaticResource BoolToVisibility}}"
+                       Foreground="{StaticResource DangerBrush}"
+                       FontSize="10" Margin="0,2,0,0" TextTrimming="CharacterEllipsis" />
+        </Grid>
+    </Border>
+</UserControl>

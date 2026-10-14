@@ -1,0 +1,1182 @@
+<UserControl x:Class="hava_kontrol.Views.ProcessFlowDiagramView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:hava_kontrol.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="950" d:DesignWidth="1800">
+
+    <UserControl.Resources>
+        <!-- ============================================ -->
+        <!-- P&ID STANDART VALF KART BUTONU STİLİ (MAVİ)   -->
+        <!-- ============================================ -->
+        <Style x:Key="ValveDiagramButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Command" Value="{Binding ToggleCommand}" />
+            <Setter Property="ToolTip" Value="{Binding ToolTipText}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="valveCard"
+                                Background="#EEF6FF"
+                                BorderBrush="{Binding StatusBorderBrush}"
+                                BorderThickness="1.8"
+                                CornerRadius="8"
+                                Padding="4,2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Üst Başlık: VALF 1..8 -->
+                                <TextBlock Grid.Row="0"
+                                           Text="{Binding DiagramLabel}"
+                                           FontSize="10" FontWeight="Bold"
+                                           Foreground="#1C4A78"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,1" />
+
+                                <!-- Vana P&ID Sembolü (Kum Saati + Aktüatör) -->
+                                <Canvas Grid.Row="1" Width="40" Height="20"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Background="Transparent">
+                                    <Polygon Points="2,2 20,10 2,18"
+                                             Fill="{Binding StatusFillBrush}"
+                                             Stroke="{Binding StatusBorderBrush}"
+                                             StrokeThickness="1.8" />
+                                    <Polygon Points="38,2 20,10 38,18"
+                                             Fill="{Binding StatusFillBrush}"
+                                             Stroke="{Binding StatusBorderBrush}"
+                                             StrokeThickness="1.8" />
+                                    <Line X1="20" Y1="10" X2="20" Y2="1"
+                                          Stroke="{Binding StatusBorderBrush}"
+                                          StrokeThickness="1.8" />
+                                    <Line X1="14" Y1="1" X2="26" Y2="1"
+                                          Stroke="{Binding StatusBorderBrush}"
+                                          StrokeThickness="1.8" />
+                                </Canvas>
+
+                                <!-- Alt Durum Rozeti (● AÇIK / ● KAPALI) -->
+                                <Border Grid.Row="2"
+                                        Background="{Binding StatusFillBrush}"
+                                        BorderBrush="{Binding StatusBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="3"
+                                        Padding="4,1"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,1">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="5" Height="5"
+                                                 Fill="{Binding StatusColor}"
+                                                 Margin="0,0,3,0"
+                                                 VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   FontSize="8" FontWeight="Bold"
+                                                   Foreground="{Binding StatusColor}"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsOpen}" Value="True">
+                                <Setter TargetName="valveCard" Property="Background" Value="#F0FDF4" />
+                                <Setter TargetName="valveCard" Property="BorderBrush" Value="#22C55E" />
+                                <Setter TargetName="valveCard" Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding HasError}" Value="True">
+                                <Setter TargetName="valveCard" Property="Background" Value="#FFFBEB" />
+                                <Setter TargetName="valveCard" Property="BorderBrush" Value="#F59E0B" />
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="valveCard" Property="BorderBrush" Value="#2563EB" />
+                                <Setter TargetName="valveCard" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.30" Color="#2563EB" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="valveCard" Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ============================================ -->
+        <!-- TAHLİYE / EGZOZ VALF BUTONU STİLİ (TURUNCU)  -->
+        <!-- ============================================ -->
+        <Style x:Key="OrangeValveDiagramButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Command" Value="{Binding ToggleCommand}" />
+            <Setter Property="ToolTip" Value="{Binding ToolTipText}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="orangeValveCard"
+                                Background="#FFF1E0"
+                                BorderBrush="#D17A1F"
+                                BorderThickness="1.8"
+                                CornerRadius="8"
+                                Padding="4,2">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Üst Başlık: VALF 13..16 -->
+                                <TextBlock Grid.Row="0"
+                                           Text="{Binding DiagramLabel}"
+                                           FontSize="9.5" FontWeight="Bold"
+                                           Foreground="#8A4B0A"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,1" />
+
+                                <!-- Vana P&ID Sembolü (Turuncu) -->
+                                <Canvas Grid.Row="1" Width="38" Height="18"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Background="Transparent">
+                                    <Polygon Points="2,2 19,9 2,16"
+                                             Fill="{Binding StatusFillBrush}"
+                                             Stroke="#D17A1F"
+                                             StrokeThickness="1.8" />
+                                    <Polygon Points="36,2 19,9 36,16"
+                                             Fill="{Binding StatusFillBrush}"
+                                             Stroke="#D17A1F"
+                                             StrokeThickness="1.8" />
+                                    <Line X1="19" Y1="9" X2="19" Y2="1"
+                                          Stroke="#D17A1F"
+                                          StrokeThickness="1.8" />
+                                    <Line X1="13" Y1="1" X2="25" Y2="1"
+                                          Stroke="#D17A1F"
+                                          StrokeThickness="1.8" />
+                                </Canvas>
+
+                                <!-- Alt Durum Rozeti -->
+                                <Border Grid.Row="2"
+                                        Background="#FDECE0"
+                                        BorderBrush="#D17A1F"
+                                        BorderThickness="1"
+                                        CornerRadius="3"
+                                        Padding="4,1"
+                                        HorizontalAlignment="Center"
+                                        Margin="0,1">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Ellipse Width="5" Height="5"
+                                                 Fill="{Binding StatusColor}"
+                                                 Margin="0,0,3,0"
+                                                 VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding StatusText}"
+                                                   FontSize="7.5" FontWeight="Bold"
+                                                   Foreground="#8A4B0A"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsOpen}" Value="True">
+                                <Setter TargetName="orangeValveCard" Property="Background" Value="#FEF3C7" />
+                                <Setter TargetName="orangeValveCard" Property="BorderBrush" Value="#D97706" />
+                            </DataTrigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="orangeValveCard" Property="BorderBrush" Value="#B45309" />
+                                <Setter TargetName="orangeValveCard" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect BlurRadius="7" ShadowDepth="1.5" Opacity="0.32" Color="#D97706" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="orangeValveCard" Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="{StaticResource SurfaceBrush}"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="10,6">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ============================================ -->
+            <!-- ŞEMA ÜST BAŞLIK VE HIZLI EMNİYET BUTONLARI   -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="0" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="⛯" FontSize="15" VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{StaticResource PrimaryBrush}" />
+                    <TextBlock Text="P&amp;ID SÜREÇ VE AKIŞ ŞEMASI"
+                               Style="{StaticResource SectionTitle}"
+                               FontSize="13.5" FontWeight="Bold"
+                               VerticalAlignment="Center" />
+                    <Border Background="#EFF6FF" BorderBrush="#93C5FD" BorderThickness="1" CornerRadius="4" Padding="7,2" Margin="12,0,0,0"
+                            ToolTip="VALF 8 artık sensör çıkışında değil, karışım manifoldunun tahliye (egzoz) hattındadır. Sensör hücre çıkışı doğrudan atmosfere bağlıdır.">
+                        <TextBlock Text="Manifold Tahliye &amp; Çoklu V-OVG Mimarisi 🛈" FontSize="9.5" FontWeight="SemiBold" Foreground="#1D4ED8" />
+                    </Border>
+                </StackPanel>
+
+                <!-- Güç Çıkışları ve Hızlı Emniyet Kapatma Butonları -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Tüm Valfleri Kapat Butonu -->
+                    <Button Command="{Binding CloseAllValvesCommand}"
+                            ToolTip="Sistemdeki tüm gaz ve tahliye valflerini anında kapatır (V1 - V8, V13 - V16)"
+                            Height="26" Padding="8,0" Margin="0,0,5,0"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="btnBorder"
+                                        Background="#FEF2F2"
+                                        BorderBrush="#EF4444"
+                                        BorderThickness="1.2"
+                                        CornerRadius="5"
+                                        Padding="{TemplateBinding Padding}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="🔒" FontSize="9.5" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="TÜM VALFLERİ KAPAT" FontSize="9" FontWeight="Bold" Foreground="#DC2626" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background" Value="#FEE2E2" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background" Value="#FECACA" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Tüm Çıkışları Kapat Butonu -->
+                    <Button Command="{Binding TurnOffAllPowerOutputsCommand}"
+                            ToolTip="Tüm PLC röle güç çıkışlarını kapatır (Y0.8 - Y0.11)"
+                            Height="26" Padding="8,0" Margin="0,0,8,0"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="btnBorder"
+                                        Background="#FFFBEB"
+                                        BorderBrush="#F59E0B"
+                                        BorderThickness="1.2"
+                                        CornerRadius="5"
+                                        Padding="{TemplateBinding Padding}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="⚡" FontSize="9.5" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="TÜM ÇIKIŞLARI KAPAT" FontSize="9" FontWeight="Bold" Foreground="#D97706" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background" Value="#FEF3C7" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="btnBorder" Property="Background" Value="#FDE68A" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Dikey İnce Ayraç -->
+                    <Rectangle Width="1" Height="16" Fill="{StaticResource CardBorderBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
+
+                    <!-- Güç Çıkışları Başlığı -->
+                    <TextBlock Text="GÜÇ ÇIKIŞLARI:"
+                               Style="{StaticResource MutedText}"
+                               FontSize="9.5" FontWeight="Bold"
+                               VerticalAlignment="Center" Margin="0,0,5,0" />
+
+                    <!-- Genişletilmiş Güç Çıkışları Butonları (Y0.8 - Y0.11) -->
+                    <ItemsControl ItemsSource="{Binding PowerOutputs}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:PowerOutputViewModel}">
+                                <Button Command="{Binding ToggleCommand}"
+                                        ToolTip="{Binding FunctionalName, StringFormat='{}{0} — Tıklayarak Aç/Kapat'}"
+                                        Margin="0,0,4,0" Padding="6,2" MinWidth="68" Height="26"
+                                        Cursor="Hand">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="pwrBorder"
+                                                    Background="{StaticResource BgBrush}"
+                                                    BorderBrush="{Binding StatusColor}"
+                                                    BorderThickness="1.5"
+                                                    CornerRadius="5"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <Ellipse Width="6" Height="6" Fill="{Binding StatusColor}" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                    <TextBlock Text="{Binding ButtonLabel}" FontSize="9.5" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsOn}" Value="True">
+                                                    <Setter TargetName="pwrBorder" Property="Background" Value="#DCFCE7" />
+                                                </DataTrigger>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="pwrBorder" Property="Opacity" Value="0.85" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================ -->
+            <!-- ANA P&ID VEKTÖR ŞEMASI (1800 x 900)          -->
+            <!-- BÜYÜTÜLMÜŞ, ALANA TAM OTURAN DÜZEN           -->
+            <!-- ============================================ -->
+            <Border Grid.Row="1" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+                <Viewbox Stretch="Uniform" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Canvas Width="1800" Height="900" Background="Transparent" ClipToBounds="True">
+
+                    <!-- ============================================ -->
+                    <!-- 2. BORU HATLARI (PIPELINES)                  -->
+                    <!-- ============================================ -->
+
+                    <!-- Hat 1 (GAZ 1): Y=55 -->
+                    <Line X1="210" Y1="55" X2="270" Y2="55" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="264,51 270,55 264,59" Fill="#2F6FB0" />
+                    <Line X1="366" Y1="55" X2="416" Y2="55" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="410,51 416,55 410,59" Fill="#2F6FB0" />
+                    <Line X1="606" Y1="55" X2="810" Y2="55" Stroke="#2F6FB0" StrokeThickness="2.8" />
+
+                    <!-- Hat 2 (GAZ 2): Merkez Y=195 -> V-OVG 2 -> Üst Y=145, Alt Y=245 -->
+                    <Line X1="210" Y1="195" X2="270" Y2="195" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="264,191 270,195 264,199" Fill="#2F6FB0" />
+                    <!-- Üst Kol (VALF 2 -> MFC-2 -> Manifold) -->
+                    <Line X1="394" Y1="175" X2="420" Y2="145" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Polygon Points="415,148 420,145 416,153" Fill="#279A7A" />
+                    <Line X1="516" Y1="145" X2="566" Y2="145" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="560,141 566,145 560,149" Fill="#2F6FB0" />
+                    <Line X1="756" Y1="145" X2="810" Y2="145" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <!-- Alt Kol (VALF 13 -> Egzoz) -->
+                    <Line X1="394" Y1="215" X2="440" Y2="245" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Line X1="536" Y1="245" X2="586" Y2="245" Stroke="#D17A1F" StrokeThickness="2.4" />
+                    <Polygon Points="580,241 586,245 580,249" Fill="#D17A1F" />
+
+                    <!-- Hat 3 (GAZ 3): Merkez Y=370 -> V-OVG 3 -> Üst Y=320, Alt Y=420 -->
+                    <Line X1="210" Y1="370" X2="270" Y2="370" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="264,366 270,370 264,374" Fill="#2F6FB0" />
+                    <!-- Üst Kol (VALF 3 -> MFC-3 -> Manifold) -->
+                    <Line X1="394" Y1="350" X2="420" Y2="320" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Polygon Points="415,323 420,320 416,328" Fill="#279A7A" />
+                    <Line X1="516" Y1="320" X2="566" Y2="320" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="560,316 566,320 560,324" Fill="#2F6FB0" />
+                    <Line X1="756" Y1="320" X2="810" Y2="320" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <!-- Alt Kol (VALF 14 -> Egzoz) -->
+                    <Line X1="394" Y1="390" X2="440" Y2="420" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Line X1="536" Y1="420" X2="586" Y2="420" Stroke="#D17A1F" StrokeThickness="2.4" />
+                    <Polygon Points="580,416 586,420 580,424" Fill="#D17A1F" />
+
+                    <!-- Hat 4 (GAZ 4): Merkez Y=545 -> V-OVG 4 -> Üst Y=495, Alt Y=595 -->
+                    <Line X1="210" Y1="545" X2="270" Y2="545" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="264,541 270,545 264,549" Fill="#2F6FB0" />
+                    <!-- Üst Kol (VALF 4 -> MFC-4 -> Manifold) -->
+                    <Line X1="394" Y1="525" X2="420" Y2="495" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Polygon Points="415,498 420,495 416,503" Fill="#279A7A" />
+                    <Line X1="516" Y1="495" X2="566" Y2="495" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="560,491 566,495 560,499" Fill="#2F6FB0" />
+                    <Line X1="756" Y1="495" X2="810" Y2="495" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <!-- Alt Kol (VALF 15 -> Egzoz) -->
+                    <Line X1="394" Y1="565" X2="440" Y2="595" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Line X1="536" Y1="595" X2="586" Y2="595" Stroke="#D17A1F" StrokeThickness="2.4" />
+                    <Polygon Points="580,591 586,595 580,599" Fill="#D17A1F" />
+
+                    <!-- Hat 5 (KURU HAVA JENERATÖRÜ): Merkez Y=720 -> V-OVG 1 -> Üst Y=670, Alt Y=770 -->
+                    <Line X1="210" Y1="720" X2="270" Y2="720" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <Polygon Points="264,716 270,720 264,724" Fill="#2F6FB0" />
+                    <!-- Üst Kol (VALF 5 -> Doğrudan Manifold) -->
+                    <Line X1="394" Y1="700" X2="420" Y2="670" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Polygon Points="415,673 420,670 416,678" Fill="#279A7A" />
+                    <Line X1="516" Y1="670" X2="810" Y2="670" Stroke="#2F6FB0" StrokeThickness="2.8" />
+                    <!-- Alt Kol (VALF 16 -> Egzoz) -->
+                    <Line X1="394" Y1="740" X2="440" Y2="770" Stroke="#279A7A" StrokeThickness="2.2" />
+                    <Line X1="536" Y1="770" X2="586" Y2="770" Stroke="#D17A1F" StrokeThickness="2.4" />
+                    <Polygon Points="580,766 586,770 580,774" Fill="#D17A1F" />
+
+                    <!-- Kuru Hava Bypass / Sensör Temizleme Hattı (VALF 7) -->
+                    <Polyline Points="115,750 115,865 260,865" Stroke="#8A8A8A" StrokeThickness="2.4" StrokeDashArray="5,3" Fill="Transparent" />
+                    <Polyline Points="356,865 1235,865 1235,420" Stroke="#8A8A8A" StrokeThickness="2.4" StrokeDashArray="5,3" Fill="Transparent" />
+                    <Polygon Points="1231,428 1235,420 1239,428" Fill="#8A8A8A" />
+
+                    <!-- ============================================ -->
+                    <!-- 3. KARIŞIM MANİFOLDU VE ÇIKIŞ HATTI          -->
+                    <!-- ============================================ -->
+                    <!-- Dikey Toplama Hattı (X=810, Y=55..670) -->
+                    <Line X1="810" Y1="55" X2="810" Y2="670" Stroke="#2F6FB0" StrokeThickness="4" />
+
+                    <!-- Manifold Giriş Hattı (X=810..860, Y=420) -->
+                    <Line X1="810" Y1="420" X2="860" Y2="420" Stroke="#2F6FB0" StrokeThickness="4" />
+
+                    <!-- Manifold Çıkışından Ayrım Noktasına (X=1030..1080, Y=420) -->
+                    <Line X1="1030" Y1="420" X2="1080" Y2="420" Stroke="#2F6FB0" StrokeThickness="4" />
+                    <Ellipse Canvas.Left="1075" Canvas.Top="415" Width="10" Height="10" Fill="#2F6FB0" />
+
+                    <!-- Manifold Tahliye Kolu (Aşağı: VALF 8 -> Egzoz) -->
+                    <Line X1="1080" Y1="420" X2="1080" Y2="520" Stroke="#2F6FB0" StrokeThickness="3" />
+                    <Polygon Points="1076,512 1080,520 1084,512" Fill="#2F6FB0" />
+                    <Line X1="1130" Y1="550" X2="1190" Y2="550" Stroke="#D17A1F" StrokeThickness="2.4" />
+                    <Polygon Points="1184,546 1190,550 1184,554" Fill="#D17A1F" />
+
+                    <!-- Manifold Proses Hattı (Sağa: VALF 6 -> Sensör) -->
+                    <Line X1="1080" Y1="420" X2="1120" Y2="420" Stroke="#2F6FB0" StrokeThickness="3.5" />
+                    <Line X1="1216" Y1="420" X2="1260" Y2="420" Stroke="#2F6FB0" StrokeThickness="3.5" />
+                    <Polygon Points="1254,416 1260,420 1254,424" Fill="#2F6FB0" />
+
+                    <!-- Sensörden Doğrudan ÇIKIŞ Hattı (X=1580..1650, Y=420) -->
+                    <Line X1="1580" Y1="420" X2="1650" Y2="420" Stroke="#2F6FB0" StrokeThickness="3.5" />
+                    <Polygon Points="1644,416 1650,420 1644,424" Fill="#2F6FB0" />
+
+                    <!-- Keysight ve DP831A Sinyal Hatları (Sensöre Bağlı) -->
+                    <Line X1="1420" Y1="225" X2="1420" Y2="310" Stroke="#8E44EC" StrokeThickness="2.4" StrokeDashArray="4,3" />
+                    <Polygon Points="1416,302 1420,310 1424,302" Fill="#8E44EC" />
+
+                    <Line X1="1420" Y1="600" X2="1420" Y2="530" Stroke="#8E44EC" StrokeThickness="2.4" StrokeDashArray="4,3" />
+                    <Polygon Points="1416,538 1420,530 1424,538" Fill="#8E44EC" />
+
+                    <!-- ============================================ -->
+                    <!-- 4. GAZ GİRİŞ KARTLARI (SOL)                  -->
+                    <!-- ============================================ -->
+
+                    <!-- Gaz 1 -->
+                    <Border Canvas.Left="20" Canvas.Top="25" Width="190" Height="60"
+                            Background="#EAF3FC" BorderBrush="#2F6FB0" BorderThickness="1.5" CornerRadius="8" Padding="8,4">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="GAZ GİRİŞ 1" FontSize="13" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                            <TextBlock Text="(GAZ 1 · CH₄)" FontSize="11" Foreground="#1C4A78" TextAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Gaz 2 -->
+                    <Border Canvas.Left="20" Canvas.Top="165" Width="190" Height="60"
+                            Background="#EAF3FC" BorderBrush="#2F6FB0" BorderThickness="1.5" CornerRadius="8" Padding="8,4">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="GAZ GİRİŞ 2" FontSize="13" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                            <TextBlock Text="(GAZ 2 · N₂)" FontSize="11" Foreground="#1C4A78" TextAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Gaz 3 -->
+                    <Border Canvas.Left="20" Canvas.Top="340" Width="190" Height="60"
+                            Background="#EAF3FC" BorderBrush="#2F6FB0" BorderThickness="1.5" CornerRadius="8" Padding="8,4">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="GAZ GİRİŞ 3" FontSize="13" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                            <TextBlock Text="(GAZ 3 · Hedef 2)" FontSize="11" Foreground="#1C4A78" TextAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Gaz 4 -->
+                    <Border Canvas.Left="20" Canvas.Top="515" Width="190" Height="60"
+                            Background="#EAF3FC" BorderBrush="#2F6FB0" BorderThickness="1.5" CornerRadius="8" Padding="8,4">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="GAZ GİRİŞ 4" FontSize="13" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                            <TextBlock Text="(GAZ 4 · Kalibrasyon)" FontSize="11" Foreground="#1C4A78" TextAlignment="Center" Margin="0,1,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Kuru Hava -->
+                    <Border Canvas.Left="20" Canvas.Top="690" Width="190" Height="60"
+                            Background="#EAF3FC" BorderBrush="#2F6FB0" BorderThickness="1.5" CornerRadius="8" Padding="8,4">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="KURU HAVA" FontSize="12.5" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                            <TextBlock Text="JENERATÖRÜ" FontSize="11.5" FontWeight="Bold" Foreground="#1C4A78" TextAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ============================================ -->
+                    <!-- 5. V-OVG FIRIN BLOKLARI (124 x 80)           -->
+                    <!-- ============================================ -->
+
+                    <!-- V-OVG 2 (Gaz 2 Hattında: Merkez Y=195) -->
+                    <Button Canvas.Left="270" Canvas.Top="155" Width="124" Height="80"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Vovg2}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="ovgCard" Background="#EAF7F2" BorderBrush="#279A7A" BorderThickness="1.8" CornerRadius="8" Padding="6,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="🔥 V-OVG 2" FontSize="11.5" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Left" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Kamera Durumu">
+                                                <TextBlock Text="📹" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg2.CameraStatusColor, FallbackValue=#94A3B8}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Vovg2.TempPVText, FallbackValue='T: 25.0 °C', StringFormat='T: {0}'}" FontSize="10.5" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Vovg2.FlowPVText, FallbackValue='Q: 0.0 sccm', StringFormat='Q: {0}'}" FontSize="10" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg2.ConnectionStatusColor, FallbackValue=#279A7A}" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Vovg2.ConnectionStatusText, FallbackValue='KAPALI'}" FontSize="8.5" FontWeight="SemiBold" Foreground="#1A6B52" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ovgCard" Property="BorderBrush" Value="#059669" />
+                                        <Setter TargetName="ovgCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.3" Color="#059669" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- V-OVG 3 (Gaz 3 Hattında: Merkez Y=370) -->
+                    <Button Canvas.Left="270" Canvas.Top="330" Width="124" Height="80"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Vovg3}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="ovgCard" Background="#EAF7F2" BorderBrush="#279A7A" BorderThickness="1.8" CornerRadius="8" Padding="6,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="🔥 V-OVG 3" FontSize="11.5" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Left" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Kamera Durumu">
+                                                <TextBlock Text="📹" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg3.CameraStatusColor, FallbackValue=#94A3B8}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Vovg3.TempPVText, FallbackValue='T: 25.0 °C', StringFormat='T: {0}'}" FontSize="10.5" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Vovg3.FlowPVText, FallbackValue='Q: 0.0 sccm', StringFormat='Q: {0}'}" FontSize="10" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg3.ConnectionStatusColor, FallbackValue=#279A7A}" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Vovg3.ConnectionStatusText, FallbackValue='KAPALI'}" FontSize="8.5" FontWeight="SemiBold" Foreground="#1A6B52" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ovgCard" Property="BorderBrush" Value="#059669" />
+                                        <Setter TargetName="ovgCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.3" Color="#059669" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- V-OVG 4 (Gaz 4 Hattında: Merkez Y=545) -->
+                    <Button Canvas.Left="270" Canvas.Top="505" Width="124" Height="80"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Vovg4}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="ovgCard" Background="#EAF7F2" BorderBrush="#279A7A" BorderThickness="1.8" CornerRadius="8" Padding="6,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="🔥 V-OVG 4" FontSize="11.5" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Left" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Kamera Durumu">
+                                                <TextBlock Text="📹" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg4.CameraStatusColor, FallbackValue=#94A3B8}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Vovg4.TempPVText, FallbackValue='T: 25.0 °C', StringFormat='T: {0}'}" FontSize="10.5" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Vovg4.FlowPVText, FallbackValue='Q: 0.0 sccm', StringFormat='Q: {0}'}" FontSize="10" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg4.ConnectionStatusColor, FallbackValue=#279A7A}" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Vovg4.ConnectionStatusText, FallbackValue='KAPALI'}" FontSize="8.5" FontWeight="SemiBold" Foreground="#1A6B52" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ovgCard" Property="BorderBrush" Value="#059669" />
+                                        <Setter TargetName="ovgCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.3" Color="#059669" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- V-OVG 1 (Kuru Hava Hattında: Merkez Y=720) -->
+                    <Button Canvas.Left="270" Canvas.Top="680" Width="124" Height="80"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Vovg1}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="ovgCard" Background="#EAF7F2" BorderBrush="#279A7A" BorderThickness="1.8" CornerRadius="8" Padding="6,4">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="🔥 V-OVG 1" FontSize="11.5" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Left" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Kamera Durumu">
+                                                <TextBlock Text="📹" FontSize="9" Margin="0,0,2,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg1.CameraStatusColor, FallbackValue=#94A3B8}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Vovg1.TempPVText, FallbackValue='T: 25.0 °C', StringFormat='T: {0}'}" FontSize="10.5" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Center" />
+                                            <TextBlock Text="{Binding Vovg1.FlowPVText, FallbackValue='Q: 0.0 sccm', StringFormat='Q: {0}'}" FontSize="10" FontWeight="Bold" Foreground="#1A6B52" HorizontalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,1,0,0">
+                                                <Ellipse Width="6" Height="6" Fill="{Binding Vovg1.ConnectionStatusColor, FallbackValue=#279A7A}" Margin="0,0,3,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Vovg1.ConnectionStatusText, FallbackValue='KAPALI'}" FontSize="8.5" FontWeight="SemiBold" Foreground="#1A6B52" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ovgCard" Property="BorderBrush" Value="#059669" />
+                                        <Setter TargetName="ovgCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="8" ShadowDepth="1.5" Opacity="0.3" Color="#059669" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- ============================================ -->
+                    <!-- 6. HAT VALFLERİ (VALF 1 - 8)                 -->
+                    <!-- ÇAKIŞMALAR ÖNLENDİ, GENİŞ DİKEY ARALIK      -->
+                    <!-- ============================================ -->
+
+                    <!-- VALF 1 (Gaz 1 Hattı: X=270, Y=27, Merkez Y=55) -->
+                    <Button Canvas.Left="270" Canvas.Top="27" Width="96" Height="56"
+                            DataContext="{Binding Valves[0]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 2 (Gaz 2 Üst Kol: X=420, Y=117, Merkez Y=145) -->
+                    <Button Canvas.Left="420" Canvas.Top="117" Width="96" Height="56"
+                            DataContext="{Binding Valves[1]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 3 (Gaz 3 Üst Kol: X=420, Y=292, Merkez Y=320) -->
+                    <!-- VALF 13'ten (Y=245) tam 75px aşağıda, ASLA ÇAKIŞMAZ -->
+                    <Button Canvas.Left="420" Canvas.Top="292" Width="96" Height="56"
+                            DataContext="{Binding Valves[2]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 4 (Gaz 4 Üst Kol: X=420, Y=467, Merkez Y=495) -->
+                    <!-- VALF 14'ten (Y=420) tam 75px aşağıda, ASLA ÇAKIŞMAZ -->
+                    <Button Canvas.Left="420" Canvas.Top="467" Width="96" Height="56"
+                            DataContext="{Binding Valves[3]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 5 (Kuru Hava Üst Kol: X=420, Y=642, Merkez Y=670) -->
+                    <!-- VALF 15'ten (Y=595) tam 75px aşağıda, ASLA ÇAKIŞMAZ -->
+                    <Button Canvas.Left="420" Canvas.Top="642" Width="96" Height="56"
+                            DataContext="{Binding Valves[4]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 6 (Manifold Çıkışı -> Hücre Girişi: X=1120, Y=392, Merkez Y=420) -->
+                    <Button Canvas.Left="1120" Canvas.Top="392" Width="96" Height="56"
+                            DataContext="{Binding Valves[5]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+
+                    <!-- VALF 7 (Kuru Hava Sensör Temizleme / Bypass: X=260, Y=837, Merkez Y=865) -->
+                    <Button Canvas.Left="260" Canvas.Top="837" Width="96" Height="56"
+                            DataContext="{Binding Valves[6]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+                    <TextBlock Canvas.Left="640" Canvas.Top="872" Text="Sensör Temizleme / Bypass Hattı (Kuru Hava)" FontSize="11" Foreground="#64748B" FontWeight="Bold" />
+
+                    <!-- VALF 8 (Manifold Tahliye / Egzoz: X=1032, Y=522, Merkez Y=550) -->
+                    <Button Canvas.Left="1032" Canvas.Top="522" Width="96" Height="56"
+                            DataContext="{Binding Valves[7]}"
+                            Style="{StaticResource ValveDiagramButtonStyle}" />
+                    <TextBlock Canvas.Left="1010" Canvas.Top="582" Text="(manifold tahliye vanası)" FontSize="9.5" FontStyle="Italic" Foreground="#1C5FA8" FontWeight="SemiBold" />
+
+                    <!-- ============================================ -->
+                    <!-- 7. TAHLİYE VALFLERİ (VALF 13 - 16)          -->
+                    <!-- ÇAKIŞMASIZ, NET KONUMLANDIRMA                -->
+                    <!-- ============================================ -->
+
+                    <!-- VALF 13 (V-OVG 2 Egzoz: X=440, Y=219, Merkez Y=245) -->
+                    <!-- VALF 3 (Y=292) ile arasında 47px net boşluk vardır -->
+                    <Button Canvas.Left="440" Canvas.Top="219" Width="96" Height="52"
+                            DataContext="{Binding Valve13}"
+                            Style="{StaticResource OrangeValveDiagramButtonStyle}" />
+
+                    <Border Canvas.Left="586" Canvas.Top="229" Width="140" Height="32"
+                            Background="#FDECE0" BorderBrush="#D17A1F" BorderThickness="1.6" CornerRadius="6">
+                        <TextBlock Text="ÇIKIŞ / EGZOZ" FontSize="10.5" FontWeight="Bold" Foreground="#8A4B0A" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- VALF 14 (V-OVG 3 Egzoz: X=440, Y=394, Merkez Y=420) -->
+                    <!-- VALF 4 (Y=467) ile arasında 47px net boşluk vardır -->
+                    <Button Canvas.Left="440" Canvas.Top="394" Width="96" Height="52"
+                            DataContext="{Binding Valve14}"
+                            Style="{StaticResource OrangeValveDiagramButtonStyle}" />
+
+                    <Border Canvas.Left="586" Canvas.Top="404" Width="140" Height="32"
+                            Background="#FDECE0" BorderBrush="#D17A1F" BorderThickness="1.6" CornerRadius="6">
+                        <TextBlock Text="ÇIKIŞ / EGZOZ" FontSize="10.5" FontWeight="Bold" Foreground="#8A4B0A" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- VALF 15 (V-OVG 4 Egzoz: X=440, Y=569, Merkez Y=595) -->
+                    <!-- VALF 5 (Y=642) ile arasında 47px net boşluk vardır -->
+                    <Button Canvas.Left="440" Canvas.Top="569" Width="96" Height="52"
+                            DataContext="{Binding Valve15}"
+                            Style="{StaticResource OrangeValveDiagramButtonStyle}" />
+
+                    <Border Canvas.Left="586" Canvas.Top="579" Width="140" Height="32"
+                            Background="#FDECE0" BorderBrush="#D17A1F" BorderThickness="1.6" CornerRadius="6">
+                        <TextBlock Text="ÇIKIŞ / EGZOZ" FontSize="10.5" FontWeight="Bold" Foreground="#8A4B0A" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- VALF 16 (V-OVG 1 Egzoz: X=440, Y=744, Merkez Y=770) -->
+                    <!-- VALF 7 (Y=837) ile arasında 67px net boşluk vardır -->
+                    <Button Canvas.Left="440" Canvas.Top="744" Width="96" Height="52"
+                            DataContext="{Binding Valve16}"
+                            Style="{StaticResource OrangeValveDiagramButtonStyle}" />
+
+                    <Border Canvas.Left="586" Canvas.Top="754" Width="140" Height="32"
+                            Background="#FDECE0" BorderBrush="#D17A1F" BorderThickness="1.6" CornerRadius="6">
+                        <TextBlock Text="ÇIKIŞ / EGZOZ" FontSize="10.5" FontWeight="Bold" Foreground="#8A4B0A" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- VALF 8 Tahliye Çıkış Kutusu -->
+                    <Border Canvas.Left="1190" Canvas.Top="532" Width="150" Height="36"
+                            Background="#FDECE0" BorderBrush="#D17A1F" BorderThickness="1.6" CornerRadius="6">
+                        <TextBlock Text="ÇIKIŞ / EGZOZ" FontSize="11" FontWeight="Bold" Foreground="#8A4B0A" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- ============================================ -->
+                    <!-- 8. MFC KONTROLCÜ BLOKLARI (190 x 68)         -->
+                    <!-- ============================================ -->
+
+                    <!-- MFC 1 (Hat 1: X=416, Y=21, Merkez Y=55) -->
+                    <Button Canvas.Left="416" Canvas.Top="21" Width="190" Height="68"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Mfcs[0]}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="mfcCard" Background="#EEF6FF" BorderBrush="{Binding Mfcs[0].FlowStatusColor}" BorderThickness="2.2" CornerRadius="8" Padding="10,6">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="MFC-1 · CH₄" FontSize="12" FontWeight="Bold" Foreground="#1C4A78" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Mfcs[0].FlowStatusText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding Mfcs[0].FlowStatusColor}" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="8" Height="8" Fill="{Binding Mfcs[0].FlowStatusColor}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Mfcs[0].ActualFlowText}" FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Mfcs[0].SetpointText, StringFormat='Ayar: {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Mfcs[0].IsSelected}" Value="True">
+                                        <Setter TargetName="mfcCard" Property="Background" Value="#F0F7FF" />
+                                        <Setter TargetName="mfcCard" Property="BorderBrush" Value="#2563EB" />
+                                        <Setter TargetName="mfcCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="mfcCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="16" ShadowDepth="3" Opacity="0.45" Color="#2563EB" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- MFC 2 (Hat 2: X=566, Y=111, Merkez Y=145) -->
+                    <Button Canvas.Left="566" Canvas.Top="111" Width="190" Height="68"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Mfcs[1]}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="mfcCard" Background="#EEF6FF" BorderBrush="{Binding Mfcs[1].FlowStatusColor}" BorderThickness="2.2" CornerRadius="8" Padding="10,6">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="MFC-2 · N₂" FontSize="12" FontWeight="Bold" Foreground="#1C4A78" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Mfcs[1].FlowStatusText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding Mfcs[1].FlowStatusColor}" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="8" Height="8" Fill="{Binding Mfcs[1].FlowStatusColor}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Mfcs[1].ActualFlowText}" FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Mfcs[1].SetpointText, StringFormat='Ayar: {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Mfcs[1].IsSelected}" Value="True">
+                                        <Setter TargetName="mfcCard" Property="Background" Value="#F0F7FF" />
+                                        <Setter TargetName="mfcCard" Property="BorderBrush" Value="#2563EB" />
+                                        <Setter TargetName="mfcCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="mfcCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="16" ShadowDepth="3" Opacity="0.45" Color="#2563EB" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- MFC 3 (Hat 3: X=566, Y=286, Merkez Y=320) -->
+                    <Button Canvas.Left="566" Canvas.Top="286" Width="190" Height="68"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Mfcs[2]}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="mfcCard" Background="#EEF6FF" BorderBrush="{Binding Mfcs[2].FlowStatusColor}" BorderThickness="2.2" CornerRadius="8" Padding="10,6">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="MFC-3 · Gaz 3" FontSize="12" FontWeight="Bold" Foreground="#1C4A78" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Mfcs[2].FlowStatusText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding Mfcs[2].FlowStatusColor}" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="8" Height="8" Fill="{Binding Mfcs[2].FlowStatusColor}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Mfcs[2].ActualFlowText}" FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Mfcs[2].SetpointText, StringFormat='Ayar: {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Mfcs[2].IsSelected}" Value="True">
+                                        <Setter TargetName="mfcCard" Property="Background" Value="#F0F7FF" />
+                                        <Setter TargetName="mfcCard" Property="BorderBrush" Value="#2563EB" />
+                                        <Setter TargetName="mfcCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="mfcCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="16" ShadowDepth="3" Opacity="0.45" Color="#2563EB" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- MFC 4 (Hat 4: X=566, Y=461, Merkez Y=495) -->
+                    <Button Canvas.Left="566" Canvas.Top="461" Width="190" Height="68"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Mfcs[3]}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="mfcCard" Background="#EEF6FF" BorderBrush="{Binding Mfcs[3].FlowStatusColor}" BorderThickness="2.2" CornerRadius="8" Padding="10,6">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="MFC-4 · Kalibr." FontSize="12" FontWeight="Bold" Foreground="#1C4A78" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Mfcs[3].FlowStatusText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding Mfcs[3].FlowStatusColor}" Margin="0,0,4,0" VerticalAlignment="Center" />
+                                                <Ellipse Width="8" Height="8" Fill="{Binding Mfcs[3].FlowStatusColor}" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Mfcs[3].ActualFlowText}" FontFamily="{StaticResource MonoFont}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding Mfcs[3].SetpointText, StringFormat='Ayar: {0}'}" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMutedBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Mfcs[3].IsSelected}" Value="True">
+                                        <Setter TargetName="mfcCard" Property="Background" Value="#F0F7FF" />
+                                        <Setter TargetName="mfcCard" Property="BorderBrush" Value="#2563EB" />
+                                        <Setter TargetName="mfcCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="mfcCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="16" ShadowDepth="3" Opacity="0.45" Color="#2563EB" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- ============================================ -->
+                    <!-- 9. KARIŞIM MANİFOLDU ODASI (170 x 100)       -->
+                    <!-- ============================================ -->
+                    <Border Canvas.Left="860" Canvas.Top="370" Width="170" Height="100"
+                            Background="#DCEDFB" BorderBrush="#1C5FA8" BorderThickness="2.2" CornerRadius="10" Padding="8,6">
+                        <Grid>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="KARIŞIM" FontSize="13.5" FontWeight="Bold" Foreground="#123B64" TextAlignment="Center" />
+                                <TextBlock Text="MANİFOLDU" FontSize="13.5" FontWeight="Bold" Foreground="#123B64" TextAlignment="Center" />
+                            </StackPanel>
+                            <!-- Akış Yönü Şeritleri -->
+                            <Path Data="M 12,24 L 26,24 L 20,18 M 26,24 L 20,30" Stroke="#123B64" StrokeThickness="1.8" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            <Path Data="M 12,48 L 26,48 L 20,42 M 26,48 L 20,54" Stroke="#123B64" StrokeThickness="1.8" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                            <Path Data="M 12,72 L 26,72 L 20,66 M 26,72 L 20,78" Stroke="#123B64" StrokeThickness="1.8" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                        </Grid>
+                    </Border>
+
+                    <!-- ============================================ -->
+                    <!-- 10. SENSÖR / ÖLÇÜM HÜCRESİ (320 x 220)        -->
+                    <!-- ============================================ -->
+                    <Border Canvas.Left="1260" Canvas.Top="310" Width="320" Height="220"
+                            Background="#EAF3FC" BorderBrush="#1C5FA8" BorderThickness="2.2" CornerRadius="12" Padding="14,12">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0">
+                                <TextBlock Text="🔬 SENSÖR / ÖLÇÜM HÜCRESİ" FontSize="14.5" FontWeight="Bold" Foreground="#123B64" TextAlignment="Center" />
+                            </StackPanel>
+
+                            <!-- Hücre İçi Test Odası ve Canlı Konsantrasyon -->
+                            <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#1C5FA8" BorderThickness="1.5" CornerRadius="8" Padding="12,8" Margin="0,8,0,8">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="Gaz Sensörü Test Odası" FontSize="12" Foreground="#123B64" TextAlignment="Center" />
+                                    <TextBlock Text="{Binding TargetConcentrationText, FallbackValue='0.0 ppm Hedef Gaz'}" FontFamily="{StaticResource MonoFont}" FontSize="18" FontWeight="Bold" Foreground="#0284C7" TextAlignment="Center" Margin="0,4,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Row="2" Background="#F0F9FF" BorderBrush="#BAE6FD" BorderThickness="1.2" CornerRadius="4" Padding="6,3">
+                                <TextBlock Text="Numune Sensör Alanı" FontSize="10.5" FontWeight="Bold" Foreground="#0284C7" TextAlignment="Center" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Atmosfere Doğrudan Çıkış -->
+                    <Border Canvas.Left="1650" Canvas.Top="397" Width="120" Height="46"
+                            Background="#EEF6FF" BorderBrush="#2F6FB0" BorderThickness="1.8" CornerRadius="8" Padding="8,4">
+                        <TextBlock Text="➔ ÇIKIŞ" FontSize="13.5" FontWeight="Bold" Foreground="#1C4A78" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Border>
+
+                    <!-- ============================================ -->
+                    <!-- 11. KEYSIGHT B2902B ELEKTROMETRE (320 x 135) -->
+                    <!-- ============================================ -->
+                    <Button Canvas.Left="1260" Canvas.Top="90" Width="320" Height="135"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding Electrometer}"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="smuCard" Background="#F3ECFC" BorderBrush="#7B3FE4" BorderThickness="2" CornerRadius="10" Padding="14,10">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="⚡ KEYSIGHT B2902B ELEKTROMETRE" FontSize="13" FontWeight="Bold" Foreground="#5C2AA8" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <Ellipse Width="11" Height="11" Fill="{Binding Electrometer.ConnectionStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                        </Grid>
+                                        <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,6,0,0">
+                                            <TextBlock Text="{Binding Electrometer.MeasurementText, FallbackValue='+0.000000 A'}" FontFamily="{StaticResource MonoFont}" FontSize="20" FontWeight="Bold" Foreground="#1E293B" />
+                                            <TextBlock Text="{Binding Electrometer.FunctionText, FallbackValue='Mod: AKIM (I)', StringFormat='Mod: {0}'}" FontSize="12" FontWeight="SemiBold" Foreground="#5C2AA8" Margin="0,3,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Electrometer.IsSelected}" Value="True">
+                                        <Setter TargetName="smuCard" Property="Background" Value="#FAF5FF" />
+                                        <Setter TargetName="smuCard" Property="BorderBrush" Value="#6D28D9" />
+                                        <Setter TargetName="smuCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="smuCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.5" Color="#6D28D9" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- ============================================ -->
+                    <!-- 12. RIGOL DP831A GÜÇ KAYNAĞI (360 x 165)     -->
+                    <!-- ============================================ -->
+                    <Button Canvas.Left="1240" Canvas.Top="600" Width="360" Height="165"
+                            Command="{Binding SelectDeviceCommand}"
+                            CommandParameter="{Binding PowerSupply}"
+                            ToolTip="RIGOL DP831A Kontrol ve Değer Ayar Panelini Açar"
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="psuCard" Background="#EEF6FF" BorderBrush="#2F6FB0" BorderThickness="2" CornerRadius="10" Padding="14,10">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="0">
+                                            <TextBlock Text="🔋 RIGOL DP831A DC GÜÇ KAYNAĞI" FontSize="13" FontWeight="Bold" Foreground="#1C4A78" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                            <Ellipse Width="11" Height="11" Fill="{Binding PowerSupply.ConnectionStatusColor}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                        </Grid>
+
+                                        <!-- 3 Kanal Göstergeleri -->
+                                        <UniformGrid Grid.Row="1" Columns="3" Margin="0,10,0,6">
+                                            <!-- CH1 -->
+                                            <Border BorderThickness="0,0,1,0" BorderBrush="#CBD5E1" Padding="0,0,8,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="CH1: 8V/5A" FontSize="10" FontWeight="Bold" Foreground="#1C4A78" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch1VoltageActualText, FallbackValue='0.00 V'}" FontFamily="{StaticResource MonoFont}" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,2,0,0" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch1CurrentActualText, FallbackValue='0.000 A'}" FontFamily="{StaticResource MonoFont}" FontSize="11" FontWeight="SemiBold" Foreground="#0284C7" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- CH2 -->
+                                            <Border BorderThickness="0,0,1,0" BorderBrush="#CBD5E1" Padding="8,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="CH2: 30V/3A" FontSize="10" FontWeight="Bold" Foreground="#1C4A78" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch2VoltageActualText, FallbackValue='0.00 V'}" FontFamily="{StaticResource MonoFont}" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,2,0,0" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch2CurrentActualText, FallbackValue='0.000 A'}" FontFamily="{StaticResource MonoFont}" FontSize="11" FontWeight="SemiBold" Foreground="#0284C7" />
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- CH3 -->
+                                            <Border Padding="8,0,0,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="CH3: 30V/3A" FontSize="10" FontWeight="Bold" Foreground="#1C4A78" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch3VoltageActualText, FallbackValue='0.00 V'}" FontFamily="{StaticResource MonoFont}" FontSize="14" FontWeight="Bold" Foreground="#0F172A" Margin="0,2,0,0" />
+                                                    <TextBlock Text="{Binding PowerSupply.Ch3CurrentActualText, FallbackValue='0.000 A'}" FontFamily="{StaticResource MonoFont}" FontSize="11" FontWeight="SemiBold" Foreground="#0284C7" />
+                                                </StackPanel>
+                                            </Border>
+                                        </UniformGrid>
+
+                                        <!-- Alt Ayarlar Rozeti -->
+                                        <Border Grid.Row="2" Background="#DFE3E6" CornerRadius="10" Width="120" Height="24" HorizontalAlignment="Center" Margin="0,4,0,0">
+                                            <TextBlock Text="AYARLAR" FontSize="9.5" FontWeight="Bold" Foreground="#334155" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding PowerSupply.IsSelected}" Value="True">
+                                        <Setter TargetName="psuCard" Property="Background" Value="#F0F7FF" />
+                                        <Setter TargetName="psuCard" Property="BorderBrush" Value="#2563EB" />
+                                        <Setter TargetName="psuCard" Property="BorderThickness" Value="3" />
+                                        <Setter TargetName="psuCard" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect BlurRadius="18" ShadowDepth="3" Opacity="0.5" Color="#2563EB" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Canvas>
+            </Viewbox>
+            </Border>
+
+            <!-- ============================================ -->
+            <!-- ŞEMA DURUM LEJANTI (ALT ŞERİT)               -->
+            <!-- ============================================ -->
+            <Border Grid.Row="2" Background="#F8FAFC" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1,0,0" Padding="6,4" Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="DURUM LEJANTI:" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,14,0" />
+
+                    <!-- Gri: Bağlantı Yok -->
+                    <Ellipse Width="8" Height="8" Fill="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBlock Text="Bağlantı Yok / Çevrimdışı" FontSize="10" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                    <!-- Nötr: Kapalı / Boşta -->
+                    <Border Width="12" Height="10" BorderBrush="#94A3B8" BorderThickness="1.5" Background="Transparent" VerticalAlignment="Center" Margin="0,0,4,0" CornerRadius="2" />
+                    <TextBlock Text="Kapalı / Boşta" FontSize="10" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                    <!-- Yeşil: Aktif Akış -->
+                    <Ellipse Width="8" Height="8" Fill="#22C55E" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBlock Text="Aktif / Akış Var / Açık" FontSize="10" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                    <!-- Turuncu: Tahliye / Egzoz -->
+                    <Border Width="12" Height="10" BorderBrush="#D17A1F" BorderThickness="1.5" Background="#FFF1E0" VerticalAlignment="Center" Margin="0,0,4,0" CornerRadius="2" />
+                    <TextBlock Text="Tahliye / Egzoz Hattı" FontSize="10" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                    <!-- Sarı: Sapma / Uyarı -->
+                    <Ellipse Width="8" Height="8" Fill="#F59E0B" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBlock Text="Sapma > %2 / Uyarı" FontSize="10" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,16,0" />
+
+                    <!-- Kırmızı: Alarm / Acil Durdur -->
+                    <Ellipse Width="8" Height="8" Fill="#EF4444" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <TextBlock Text="Kritik Alarm / Acil Durdur" FontSize="10" Foreground="#475569" VerticalAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

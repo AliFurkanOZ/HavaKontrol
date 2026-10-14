@@ -1,0 +1,263 @@
+<UserControl x:Class="hava_kontrol.Views.EventLogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:hava_kontrol.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="280" d:DesignWidth="700">
+
+    <Border Background="White"
+            BorderBrush="{StaticResource CardBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            Padding="12,10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- 0. Başlık Satırı -->
+                <RowDefinition Height="Auto" />
+                <!-- 1. Arama Kutusu ve Seviye Filtresi -->
+                <RowDefinition Height="Auto" />
+                <!-- 2. Eylem Araç Çubuğu (4 Eşit Buton) -->
+                <RowDefinition Height="Auto" />
+                <!-- 3. Olay Listesi -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- 0. Başlık Satırı -->
+            <Grid Grid.Row="0" Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <!-- Başlık -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Sağ Durum Rozeti -->
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Başlık -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="📋" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center" />
+                    <TextBlock Text="SİSTEM VE HAREKET GÜNLÜĞÜ"
+                               FontWeight="Bold"
+                               FontSize="11.5"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Canlı Günlük Rozeti -->
+                <Border Grid.Column="1"
+                        Background="#EFF6FF"
+                        BorderBrush="#BFDBFE"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="6,2"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="6" Height="6" Fill="#10B981" Margin="0,0,4,0" VerticalAlignment="Center" />
+                        <TextBlock Text="CANLI GÜNLÜK"
+                                   FontSize="9.5"
+                                   FontWeight="Bold"
+                                   Foreground="#1E40AF"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 1. Arama Kutusu ve Seviye Filtresi -->
+            <Grid Grid.Row="1" Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <!-- Arama Kutusu (Tüm Kalan Genişliği Kaplar) -->
+                    <ColumnDefinition Width="*" />
+                    <!-- Seviye Filtresi -->
+                    <ColumnDefinition Width="125" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Arama Kutusu -->
+                <Border Grid.Column="0"
+                        Background="#F8FAFC"
+                        BorderBrush="#CBD5E1"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Height="25"
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="22" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="🔍" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#94A3B8" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding LogFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="11"
+                                 Padding="0,0,4,0"
+                                 ToolTip="Cihaz (MFC, Valf, DP831, Reçete vb.), komut veya mesaj içinde canlı arama yapın" />
+                    </Grid>
+                </Border>
+
+                <!-- Seviye Filtresi -->
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding LogSeverityOptions}"
+                          SelectedItem="{Binding SelectedLogSeverity}"
+                          Height="25"
+                          FontSize="11"
+                          VerticalContentAlignment="Center"
+                          ToolTip="Log seviyesine göre filtrele" />
+            </Grid>
+
+            <!-- 2. Eylem Butonları Araç Çubuğu (4 Eşit Genişlik - Taşma/Sıkışma Yapmaz) -->
+            <UniformGrid Grid.Row="2" Rows="1" Columns="4" Margin="0,0,0,6">
+                <!-- Alarmları Onayla -->
+                <Button Content="✓ Onayla"
+                        Command="{Binding AcknowledgeAlarmsCommand}"
+                        Style="{StaticResource NeutralButton}"
+                        Padding="2,0" Height="25" Margin="0,0,2,0"
+                        FontSize="11" FontWeight="SemiBold"
+                        ToolTip="Bekleyen alarmları onaylayarak susturur" />
+
+                <!-- Log Klasörünü Aç -->
+                <Button Content="📁 Klasör"
+                        Command="{Binding OpenLogsFolderCommand}"
+                        Style="{StaticResource NeutralButton}"
+                        Padding="2,0" Height="25" Margin="2,0,2,0"
+                        FontSize="11" FontWeight="SemiBold"
+                        ToolTip="Tüm oturum ve günlük log dosyalarının saklandığı 'Logs' klasörünü açar" />
+
+                <!-- Dışa Aktar (CSV/TXT) -->
+                <Button Content="💾 Dışa Aktar"
+                        Command="{Binding ExportLogsCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        Padding="2,0" Height="25" Margin="2,0,2,0"
+                        FontSize="11" FontWeight="SemiBold"
+                        ToolTip="Olay ve hareket günlüğünü CSV veya metin dosyası olarak bilgisayarınıza kaydeder" />
+
+                <!-- Ekranı Temizle -->
+                <Button Content="🗑️ Temizle"
+                        Command="{Binding ClearUiLogsCommand}"
+                        Style="{StaticResource NeutralButton}"
+                        Padding="2,0" Height="25" Margin="2,0,0,0"
+                        FontSize="11" FontWeight="SemiBold"
+                        ToolTip="Sadece ekrandaki UI görünümünü temizler. Diskteki loglar kesinlikle korunur." />
+            </UniformGrid>
+
+            <!-- 3. Olay Listesi (ListView) -->
+            <ListView x:Name="LogListView"
+                      Grid.Row="3"
+                      ItemsSource="{Binding FilteredLogsView}"
+                      BorderThickness="1"
+                      BorderBrush="#E2E8F0"
+                      Background="#F8FAFC"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="6,4" />
+                        <Setter Property="Margin" Value="0,1" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                        <Setter Property="BorderBrush" Value="#F1F5F9" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F1F5F9" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:LogEntry}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <!-- Zaman (Milisaniyeli) -->
+                                <ColumnDefinition Width="85" />
+                                <!-- Şiddet / Hareket Rozeti -->
+                                <ColumnDefinition Width="65" />
+                                <!-- Kaynak -->
+                                <ColumnDefinition Width="85" />
+                                <!-- Mesaj -->
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Zaman (Mono font - HH:mm:ss.fff) -->
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding FormattedTime}"
+                                       FontFamily="{StaticResource MonoFont}"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       VerticalAlignment="Center" />
+
+                            <!-- Şiddet / Hareket Rozeti -->
+                            <Border Grid.Column="1"
+                                    CornerRadius="3"
+                                    Padding="5,1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Alarm}">
+                                                <Setter Property="Background" Value="#FEE2E2" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Warning}">
+                                                <Setter Property="Background" Value="#FEF3C7" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Action}">
+                                                <Setter Property="Background" Value="#E0F2FE" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Info}">
+                                                <Setter Property="Background" Value="#EFF6FF" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding SeverityText}"
+                                           FontSize="10"
+                                           FontWeight="Bold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Alarm}">
+                                                    <Setter Property="Foreground" Value="#DC2626" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Warning}">
+                                                    <Setter Property="Foreground" Value="#D97706" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Action}">
+                                                    <Setter Property="Foreground" Value="#0284C7" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static models:LogSeverity.Info}">
+                                                    <Setter Property="Foreground" Value="#2563EB" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+
+                            <!-- Kaynak -->
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding Source}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
+
+                            <!-- Mesaj -->
+                            <TextBlock Grid.Column="3"
+                                       Text="{Binding Message}"
+                                       FontSize="11"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding Message}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Border>
+</UserControl>
